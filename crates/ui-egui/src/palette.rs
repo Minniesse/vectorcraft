@@ -1658,7 +1658,9 @@ mod tests {
         for id in PICK_RUNS.iter().filter(|id| !session_only.contains(id)) {
             assert!(acts(id), "a pick of {id} does something");
         }
-        for id in PICK_RUNS.iter().chain(&["object.group", "select.key", "view.preciseCursors", "path.close"]) {
+        // Without the `plugins` feature the `plugin.*` commands are not registered, so not listed.
+        let registered = |id: &&&str| cfg!(feature = "plugins") || !id.starts_with("plugin.");
+        for id in PICK_RUNS.iter().chain(&["object.group", "select.key", "view.preciseCursors", "path.close"]).filter(registered) {
             assert!(listed.contains(*id), "{id} stays");
         }
     }

@@ -313,7 +313,11 @@ fn a_dropped_file_of_each_library_kind_opens_in_its_destination() {
         "a.jsx",
         "a.jsxinc",
         "a.jsxbin",
-    ] {
+    ]
+    .into_iter()
+    // A `.wasm` file opens (installs) as a plug-in only with the `plugins` feature.
+    .filter(|name| cfg!(feature = "plugins") || !name.ends_with(".wasm"))
+    {
         for spot in [DropSpot::Unknown, DropSpot::Elsewhere, DropSpot::Canvas(vectorcraft_geom::Point::new(1.0, 1.0))] {
             assert_eq!(app.drop_target(name, spot, true), DropTarget::Open, "{name}");
         }

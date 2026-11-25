@@ -29,10 +29,10 @@ pub const INSTALL_KIND: &str = "pluginInstall";
 /// No plug-in command is placed in a menu: none is installed.
 pub fn place_commands(_: &mut [(&'static str, Vec<craft::menu::Node>)]) {}
 
-/// Object › Plug-ins: no filter is installed; Install Plug-in… and Reload Plug-ins stay, and say
-/// that plug-ins are not available when chosen.
+/// Object › Plug-ins: no filter is installed; Install Plug-in… stays and says that plug-ins are
+/// not available when chosen (`plugin.reload` is not a command in this build, so no Reload).
 pub fn object_menu() -> Vec<craft::menu::Node> {
-    vec![placeholder(NO_FILTERS), Sep, c("Install Plug-in…", "ui.installPlugin"), c("Reload Plug-ins", "plugin.reload")]
+    vec![placeholder(NO_FILTERS), Sep, c("Install Plug-in…", "ui.installPlugin")]
 }
 
 /// File › Open With: no importer is installed.
