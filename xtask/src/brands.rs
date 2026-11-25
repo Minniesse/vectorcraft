@@ -373,7 +373,7 @@ line Pantone"; }
         assert_eq!(kind_of("crates/engine/tests/command_sweep.rs"), None);
         assert_eq!(kind_of(SELF), None);
         assert_eq!(kind_of("crates/ui-egui/Cargo.toml"), Some(Kind::Manifest));
-        assert_eq!(kind_of("docs/brand/LICENSE-brand.txt"), Some(Kind::Text));
+        assert_eq!(kind_of("docs/licenses/LICENSE.txt"), Some(Kind::Text));
         assert_eq!(kind_of("packaging/linux/nfpm.yaml"), Some(Kind::Text));
         assert_eq!(kind_of(CURSOR_MANIFEST), Some(Kind::Text));
         for skipped in ["README.md", "ROADMAP.md", "CLAUDE.md", "AGENTS.md", ".github/workflows/release.yml", "ASSETS.md", "docs/mcp.md"] {

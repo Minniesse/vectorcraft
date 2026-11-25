@@ -19,7 +19,6 @@
 	About VectorCraft	O VectorCraftu
 	Align to Path	Poravnaj s putanjom
 	Cut Path at Selected Anchor Points	Presijeci putanju na odabranim sidrenim tačkama
-	Join Our Discord	Pridružite se našem Discordu
 	Language	Jezik
 	UI Brightness	Svjetlina interfejsa
 	Dark	Tamno
@@ -961,8 +960,6 @@
 	Save Swatch Library…	Sačuvaj biblioteku uzoraka boja…
 	Symbol Libraries	Biblioteke simbola
 	Help	Pomoć
-	ArtCraft Website	Web stranica ArtCrafta
-	VectorCraft on getartcraft.com	VectorCraft na getartcraft.com
 	VectorCraft on GitHub	VectorCraft na GitHubu
 	Search Commands…	Pretraži naredbe…
 	VectorCraft Help…	Pomoć za VectorCraft…
@@ -2518,8 +2515,7 @@ digits	Malayalam	Malajalam
 	Select All Bound Objects	Odaberi sve vezane objekte
 	Multiple objects	Više objekata
 	Graphics: {adapter}	Grafika: {adapter}
-	Part of ArtCraft. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	Dio ArtCrafta. MIT OR Apache-2.0. Fontovi: Source Sans 3, Inter, JetBrains Mono (OFL). Ikone: Lucide (ISC) + VectorCraft.
-	Part of ArtCraft. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono, Noto Sans SC (OFL). Icons: Lucide (ISC) + VectorCraft.	Dio ArtCrafta. MIT OR Apache-2.0. Fontovi: Source Sans 3, Inter, JetBrains Mono, Noto Sans SC (OFL). Ikone: Lucide (ISC) + VectorCraft.
+	MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	MIT OR Apache-2.0. Fontovi: Source Sans 3, Inter, JetBrains Mono (OFL). Ikone: Lucide (ISC) + VectorCraft.
 	Version {version} — open-source vector illustration in pure Rust.	Verzija {version} — vektorska ilustracija otvorenog koda u čistom Rustu.
 	Align to Page	Poravnaj sa stranicom
 	Smooth Color	Glatka boja
@@ -4616,10 +4612,6 @@ effect	Regular	Obično
 	Recent Files	Nedavne datoteke
 	Vector illustration — fast, open, scriptable.	Vektorska ilustracija — brza, otvorena, skriptabilna.
 	Welcome to VectorCraft	Dobro došli u VectorCraft
-	ArtCraft website	Web stranica ArtCrafta
-	Discord	Discord
-	Join our Discord	Pridružite nam se na Discordu
-	Join the ArtCraft community on Discord (discord.gg/artcraft)	Pridružite se ArtCraft zajednici na Discordu (discord.gg/artcraft)
 	Source code on GitHub	Izvorni kod na GitHubu
 	All Tools	Svi alati
 	Draw	Crtaj

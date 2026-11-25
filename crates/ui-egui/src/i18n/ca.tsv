@@ -403,8 +403,6 @@ antiAlias	Sharp	Nítid
 	Artboard:	Tauler:
 	Artboards	Taulers
 	Artboards: {n}	Taulers: {n}
-	ArtCraft Website	Lloc web d’ArtCraft
-	ArtCraft website	Lloc web d’ArtCraft
 	Artistic	Artístic
 	Artwork	Art
 	Artwork Colors	Colors de l’art
@@ -1338,7 +1336,6 @@ arrowhead	Target	Diana
 	Discard Empty Type	Descarta el text buit
 	Discard Recovered Documents	Descarta els documents recuperats
 	Discard White Overprint in Output	Descarta la sobrempressió del blanc a la sortida
-	Discord	Discord
 	Discretionary Hyphen	Guionet discrecional
 	Discretionary Ligatures	Lligadures discrecionals
 	Display	Mostra
@@ -2457,9 +2454,6 @@ digits	Malayalam	Malaiàlam
 	JavaScript Files	Fitxers JavaScript
 	JavaScript:	JavaScript:
 	Join	Uneix
-	Join Our Discord	Uneix-te al nostre Discord
-	Join our Discord	Uneix-te al nostre Discord
-	Join the ArtCraft community on Discord (discord.gg/artcraft)	Uneix-te a la comunitat ArtCraft a Discord (discord.gg/artcraft)
 	Join the lines of each paragraph	Uneix les línies de cada paràgraf
 	Join Tool	Eina d’unió
 	Joins	Unions
@@ -3386,8 +3380,7 @@ digits	Malayalam	Malaiàlam
 	Paragraph Style Options	Opcions de l’estil de paràgraf
 	Paragraph Styles	Estils de paràgraf
 	Paragraph Symbol	Símbol de paràgraf
-	Part of ArtCraft. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	Forma part d’ArtCraft. MIT OR Apache-2.0. Tipus de lletra: Source Sans 3, Inter, JetBrains Mono (OFL). Icones: Lucide (ISC) + VectorCraft.
-	Part of ArtCraft. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono, Noto Sans SC (OFL). Icons: Lucide (ISC) + VectorCraft.	Forma part d’ArtCraft. MIT OR Apache-2.0. Tipus de lletra: Source Sans 3, Inter, JetBrains Mono, Noto Sans SC (OFL). Icones: Lucide (ISC) + VectorCraft.
+	MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	MIT OR Apache-2.0. Tipus de lletra: Source Sans 3, Inter, JetBrains Mono (OFL). Icones: Lucide (ISC) + VectorCraft.
 	Password	Contrasenya
 	Paste	Enganxa
 	Paste Design	Enganxa el disseny
@@ -5960,7 +5953,6 @@ digits	Malayalam	Malaiàlam
 	VectorCraft documents: one locked object, updated when the file changes.	Documents de VectorCraft: un objecte bloquejat, actualitzat quan canvia el fitxer.
 	VectorCraft Generic CMYK (SWOP-like)	CMYK genèric de VectorCraft (similar a SWOP)
 	VectorCraft Help…	Ajuda de VectorCraft…
-	VectorCraft on getartcraft.com	VectorCraft a getartcraft.com
 	VectorCraft on GitHub	VectorCraft al GitHub
 	VectorCraft read this script without running it.	VectorCraft ha llegit aquest script sense executar-lo.
 	VectorCraft Swatches (.vcswatches)	Mostres de VectorCraft (.vcswatches)

@@ -804,9 +804,6 @@ fn built_in_tree(english_names: bool, listed: &Listed) -> Vec<(&'static str, Vec
             vec![
                 c("Search Commands…", "help.commandPalette"),
                 Sep,
-                c("Join Our Discord", "help.discord"),
-                c("ArtCraft Website", "help.website"),
-                c("VectorCraft on getartcraft.com", "help.appPage"),
                 c("VectorCraft on GitHub", "help.github"),
                 Sep,
                 c("VectorCraft Help…", "help.discover"),
@@ -890,7 +887,7 @@ fn not_mac() -> Platforms {
     Platforms::WINDOWS | Platforms::LINUX | Platforms::WEB
 }
 
-/// The application menu, shown on macOS only: About and Discord, and the Settings pages, Language
+/// The application menu, shown on macOS only: About, and the Settings pages, Language
 /// and Appearance the Mac layout places by their roles.
 fn app_menu() -> Vec<Node> {
     let settings: Vec<Node> = vectorcraft_engine::cmd::prefscmds::PREF_CATEGORIES
@@ -913,7 +910,6 @@ fn app_menu() -> Vec<Node> {
     let mac = Platforms::MAC;
     vec![
         c("About VectorCraft", "help.about").role(ItemRole::About).platforms(mac),
-        c("Join Our Discord", "help.discord").platforms(mac),
         sub("Settings", settings).role(ItemRole::Settings).platforms(mac),
         sub("Language", language).role(ItemRole::Language).platforms(mac),
         sub("Appearance", appearance).role(ItemRole::Appearance).platforms(mac),

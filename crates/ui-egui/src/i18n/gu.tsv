@@ -312,8 +312,6 @@
 	Art Brush Options	આર્ટ બ્રશ વિકલ્પો
 	Art Ribbons	આર્ટ રિબન
 	Art using a deleted global swatch keeps its colour.	કાઢી નાખેલો ગ્લોબલ સ્વેચ વાપરતી આર્ટ પોતાનો રંગ જાળવે છે.
-	ArtCraft Website	ArtCraft વેબસાઇટ
-	ArtCraft website	ArtCraft વેબસાઇટ
 	Artboard	આર્ટબોર્ડ
 	Artboard Guides with Cmd/Ctrl + Ruler Drag	Cmd/Ctrl + રૂલર ખેંચીને આર્ટબોર્ડ ગાઇડ
 	Artboard Options	આર્ટબોર્ડ વિકલ્પો
@@ -2003,11 +2001,8 @@
 	JavaScript Files	JavaScript ફાઇલો
 	JavaScript:	JavaScript:
 	Join	જોડો
-	Join Our Discord	અમારા Discord માં જોડાઓ
 	Join Point Text	જોઇન્ટ પોઇન્ટ ટેક્સ્ટ
 	Join Tool	જોઇન ટૂલ
-	Join our Discord	અમારા Discord માં જોડાઓ
-	Join the ArtCraft community on Discord (discord.gg/artcraft)	Discord (discord.gg/artcraft) પર ArtCraft સમુદાયમાં જોડાઓ
 	Join the lines of each paragraph	દરેક ફકરાની લાઇનો જોડો
 	Justification	જસ્ટિફિકેશન
 	Justification…	જસ્ટિફિકેશન…
@@ -4690,7 +4685,6 @@ arrowhead	Feather	પીંછું
 	VectorCraft documents: one locked object, updated when the file changes.	VectorCraft દસ્તાવેજો: એક લૉક ઑબ્જેક્ટ, ફાઇલ બદલાય ત્યારે અપડેટ થાય છે.
 	VectorCraft is in Safe Mode: no plug-ins load or run until it starts normally.	VectorCraft સેફ મોડમાં છે: સામાન્ય રીતે શરૂ ન થાય ત્યાં સુધી કોઈ પ્લગ-ઇન લોડ કે ચાલતા નથી.
 	VectorCraft on GitHub	GitHub પર VectorCraft
-	VectorCraft on getartcraft.com	getartcraft.com પર VectorCraft
 	VectorCraft read this script without running it.	VectorCraft એ સ્ક્રિપ્ટ ચલાવ્યા વગર વાંચી.
 	VectorCraft {release} and later (version {n})	VectorCraft {release} અને પછીનાં (સંસ્કરણ {n})
 	Vectors	વેક્ટર્સ

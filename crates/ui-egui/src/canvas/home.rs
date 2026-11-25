@@ -10,8 +10,8 @@ use super::{Ui, VectorcraftApp, json};
 /// The presets the Home screen offers as templates (`file.newPresets`).
 const TEMPLATES: [&str; 6] = ["Letter", "A4", "Web 1920×1080", "Phone 390×844", "Postcard", "Social Square Post 1080×1080"];
 
-/// The icons of the three `community::link_urls` links, in their order.
-const LINK_ICONS: [&str; 3] = ["globe", "external-link", "git-branch"];
+/// The icon of the `community::link_urls` link.
+const LINK_ICONS: [&str; 1] = ["git-branch"];
 
 /// The Home screen (`app.home`; with no document open, unless its preference is off).
 pub(super) fn home(app: &mut VectorcraftApp, ui: &mut Ui, rect: egui::Rect) {
@@ -28,10 +28,6 @@ pub(super) fn home(app: &mut VectorcraftApp, ui: &mut Ui, rect: egui::Rect) {
         .map(|s| Template::new(s.name.clone(), s.name.clone(), s.size_label()))
         .collect();
     let mut links = vec![];
-    let discord = crate::credits::discord_url(app);
-    if !discord.is_empty() {
-        links.push(StartLink::url(tl!("Join our Discord"), Some(IconId::new("message-circle")), discord));
-    }
     for ((label, url), icon) in crate::community::link_urls(app).into_iter().zip(LINK_ICONS) {
         links.push(StartLink::url(tl!(label), Some(IconId::new(icon)), url));
     }
