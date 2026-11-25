@@ -13,6 +13,7 @@
 //! them ([`image_rows`]): Outline Object follows the outline of the image's opaque area
 //! ([`opaque_area`]).
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::rc::Rc;
 use std::sync::atomic::{AtomicUsize, Ordering};

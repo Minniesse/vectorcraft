@@ -184,6 +184,7 @@ fn objects_without_a_3d_effect_are_left_and_none_at_all_is_an_error() {
     assert_eq!(s.doc().unwrap().doc.node(plain).unwrap(), &kept);
 }
 
+#[cfg(feature = "plugins")]
 /// A live-effect plug-in after a fill's 3D effect that links its pieces to one of the document's
 /// swatches reshapes the edges, as it reshapes the drawn surface.
 #[test]

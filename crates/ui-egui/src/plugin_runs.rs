@@ -18,11 +18,15 @@
 //! computes.
 
 use std::sync::Arc;
-use std::sync::mpsc::{Receiver, TryRecvError, channel};
+#[cfg(feature = "plugins")]
+use std::sync::mpsc::channel;
+use std::sync::mpsc::{Receiver, TryRecvError};
 
 use serde_json::{Value, json};
 use vectorcraft_engine::EngineError;
-use vectorcraft_engine::cmd::fileio::progress::{self, Progress};
+#[cfg(feature = "plugins")]
+use vectorcraft_engine::cmd::fileio::progress;
+use vectorcraft_engine::cmd::fileio::progress::Progress;
 use vectorcraft_engine::cmd::plugin::FilterRun;
 
 use crate::VectorcraftApp;
@@ -66,6 +70,13 @@ pub fn available() -> bool {
     !cfg!(target_arch = "wasm32")
 }
 
+/// `plugin.run` without the `plugins` feature: the engine answers that it is an unknown command.
+#[cfg(not(feature = "plugins"))]
+pub fn start(app: &mut VectorcraftApp, p: Value) -> Result<Value, String> {
+    app.run("plugin.run", p)
+}
+
+#[cfg(feature = "plugins")]
 /// Runs filter `p` (`plugin.run`'s params) on a thread of its own → `{background: true, status}`;
 /// where no thread can run it, at once (`plugin.run`'s result).
 pub fn start(app: &mut VectorcraftApp, p: Value) -> Result<Value, String> {

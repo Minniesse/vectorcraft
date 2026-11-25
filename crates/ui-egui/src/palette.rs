@@ -1,6 +1,7 @@
 //! The command palette: the commands a pick runs, the tools, the panels and the Effect menu's
 //! items as the framework palette's entries, with their search index.
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -1540,11 +1541,13 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "plugins")]
     /// Each filter plug-in has one result, also when two share a name: its menu path translates,
     /// the plug-in's name does not, and a pick runs that filter (a dialog for one with parameters,
     /// nothing with no document open).
     #[test]
     fn each_filter_plugin_is_a_result_of_its_own() {
+        #[cfg(feature = "plugins")]
         use vectorcraft_plugins::wat as tpl;
         let _names = crate::tests::SHARED_PLUGIN_NAMES.lock().unwrap_or_else(|e| e.into_inner());
         let (one, two) = ("test.UI.palette_filter-one", "test.UI.palette_filter-two");
@@ -1822,10 +1825,12 @@ mod tests {
         assert_eq!(crate::i18n::tr_id(fr, "pathfinder.add", "Add"), "Réunion");
     }
 
+    #[cfg(feature = "plugins")]
     /// Two filter plug-ins with one name show their ids after it, the name untranslated, and each
     /// pick runs its own filter.
     #[test]
     fn filter_plugins_with_one_name_show_their_ids() {
+        #[cfg(feature = "plugins")]
         use vectorcraft_plugins::wat as tpl;
         let _names = crate::tests::SHARED_PLUGIN_NAMES.lock().unwrap_or_else(|e| e.into_inner());
         let (one, two) = ("test.UI.palette_same-one", "test.UI.palette_same-two");

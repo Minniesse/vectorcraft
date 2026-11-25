@@ -7,11 +7,17 @@
 #![forbid(unsafe_code)]
 
 pub mod cmd;
+#[cfg(feature = "plugins")]
+pub(crate) use vectorcraft_plugins as plugin_host;
 pub mod file_access;
 pub mod guard;
 pub mod inspect;
 pub mod journal;
 pub mod link_watch;
+/// The names the interface takes from vectorcraft-plugins, inert: no plug-in host in this build.
+#[cfg(not(feature = "plugins"))]
+#[doc(hidden)]
+pub mod plugin_host;
 pub mod schemas;
 pub mod steps;
 pub mod store;
@@ -200,6 +206,7 @@ pub struct Session {
     /// The file Edit › Color Settings are kept in; `None`: only for the process
     /// ([`Session::attach_color_settings`]).
     color_settings_file: Option<std::path::PathBuf>,
+    #[cfg(feature = "plugins")]
     /// Where the plug-ins `plugin.install` installs are kept; `None`: only for the process
     /// ([`Session::attach_plugin_store`]).
     plugin_dir: Option<std::path::PathBuf>,
@@ -221,12 +228,15 @@ pub struct Session {
     /// keeps the file access people allowed scripts; `None`: no folder
     /// ([`Session::attach_script_data`]).
     script_data_dir: Option<std::path::PathBuf>,
+    #[cfg(feature = "plugins")]
     /// A filter's output that a run made in the background handed in for `plugin.run` to apply
     /// ([`cmd::plugin::FilterRun::hand_in`]); the next `plugin.run` takes it.
     plugin_output: Option<cmd::plugin::HandedIn>,
+    #[cfg(feature = "plugins")]
     /// What a person approved for the next `plugin.install` ([`Session::approve_plugin_install`]);
     /// that install spends it, whatever it does.
     plugin_install_approval: Option<cmd::plugin::InstallApproval>,
+    #[cfg(feature = "plugins")]
     /// `plugin.install` takes `grant` and `allowHeavy` from any request
     /// ([`Session::allow_plugin_grants_from_requests`]).
     plugin_grants_from_requests: bool,

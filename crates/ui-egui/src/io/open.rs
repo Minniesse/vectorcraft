@@ -1,4 +1,8 @@
+#[cfg(feature = "plugins")]
+use crate::plugin_host as vectorcraft_plugins;
+#[cfg(feature = "plugins")]
 use vectorcraft_engine::cmd::plugin::InstallApproval;
+#[cfg(feature = "plugins")]
 use vectorcraft_plugins::permissions;
 
 use std::path::Path;
@@ -249,6 +253,7 @@ fn ask_open(
     }))
 }
 
+#[cfg(feature = "plugins")]
 /// Object › Plug-ins › Install Plug-in…: installs the module `p` gives (`path`, or `dataBase64`
 /// with `name`), else a picked `.wasm` (the web's file picker hands the file to [`open_bytes`],
 /// which installs it) → [`install_module`]'s result.
@@ -261,6 +266,7 @@ pub fn install_plugin(app: &mut VectorcraftApp, p: &Value) -> Result<Value, Stri
     ask_open(app, request, Owner::Free, |app, path| install_module(app, json!({ "path": path })))
 }
 
+#[cfg(feature = "plugins")]
 /// What permission `name` lets a plug-in do, in plain words in the UI language, with the ids of
 /// the `commands` it may call for `commands`; a name the app doesn't know is shown as it is.
 fn permission_words(name: &str, commands: &[String]) -> String {
@@ -282,6 +288,7 @@ fn permission_words(name: &str, commands: &[String]) -> String {
     words.to_string()
 }
 
+#[cfg(feature = "plugins")]
 /// Installs the plug-in module that `module` names (`plugin.install`'s `path`, or `dataBase64`
 /// with `name`) → `plugin.install`'s result. A plug-in that lists permissions no person has granted
 /// it yet asks first, showing its name, id, version, file hash and what each permission lets it
@@ -377,6 +384,7 @@ pub fn install_module(app: &mut VectorcraftApp, module: Value) -> Result<Value, 
     Ok(dialogs::plugin::ask_install(app, pending))
 }
 
+#[cfg(feature = "plugins")]
 /// Says in the status bar that `plugin.install`'s result `r` was installed.
 pub(crate) fn report_installed(app: &mut VectorcraftApp, r: &Value) {
     app.status(format!("Installed plug-in {}", permissions::display_text(r["name"].as_str().unwrap_or_default(), permissions::MAX_SHOWN_NAME)));
@@ -384,6 +392,28 @@ pub(crate) fn report_installed(app: &mut VectorcraftApp, r: &Value) {
 
 /// Where File → Open… starts: the folder of the most recently opened file, else the active
 /// document's (#4122).
+/// Install Plug-in… without the `plugins` feature: plug-ins are not available in this build.
+#[cfg(not(feature = "plugins"))]
+pub fn install_plugin(_: &mut VectorcraftApp, _: &Value) -> Result<Value, String> {
+    Err(NO_PLUGINS.into())
+}
+
+/// Installing a module without the `plugins` feature: refused, nothing is installed.
+#[cfg(not(feature = "plugins"))]
+pub fn install_module(_: &mut VectorcraftApp, _: Value) -> Result<Value, String> {
+    Err(NO_PLUGINS.into())
+}
+
+/// File › Open With without the `plugins` feature: no importer plug-in is installed.
+#[cfg(not(feature = "plugins"))]
+pub fn open_with(_: &mut VectorcraftApp, _: &Value) -> Result<Value, String> {
+    Err(NO_PLUGINS.into())
+}
+
+/// What a plug-in action answers in a build without the `plugins` feature.
+#[cfg(not(feature = "plugins"))]
+const NO_PLUGINS: &str = "plug-ins are not available in this build";
+
 fn open_dialog_folder(app: &VectorcraftApp) -> Option<String> {
     app.ui.recent_files.iter().find_map(|p| fileio::dialog_folder(p)).or_else(|| suggested(app, "").1)
 }
@@ -394,6 +424,7 @@ pub fn open_dialog(app: &mut VectorcraftApp) -> Result<Value, String> {
     ask_open(app, request, Owner::Free, |app, path| open_reporting(app, &path))
 }
 
+#[cfg(feature = "plugins")]
 /// File › Open With: opens the file `p` names (`path`), else one picked among the files with the
 /// extensions the importer plug-in `importer` lists, with that importer, also when a built-in
 /// format reads the extension (`document.open {importer, params}`), and adds it to Open Recent; a
@@ -407,11 +438,13 @@ pub fn open_with(app: &mut VectorcraftApp, p: &Value) -> Result<Value, String> {
     open_with_on(app, p, picks_a_file(p) && crate::opening::available())
 }
 
+#[cfg(feature = "plugins")]
 /// Do File › Open With's parameters leave the file to the picker?
 fn picks_a_file(p: &Value) -> bool {
     p.get("path").and_then(Value::as_str).is_none_or(str::is_empty)
 }
 
+#[cfg(feature = "plugins")]
 /// [`open_with`]; with `background`, the importer runs off the UI thread
 /// ([`crate::opening::start_with`]), its progress window offering Cancel.
 pub(crate) fn open_with_on(app: &mut VectorcraftApp, p: &Value, background: bool) -> Result<Value, String> {
@@ -427,6 +460,7 @@ pub(crate) fn open_with_on(app: &mut VectorcraftApp, p: &Value, background: bool
     ask_open(app, request, Owner::Free, move |app, path| import_from(app, &p, &path, background))
 }
 
+#[cfg(feature = "plugins")]
 /// [`open_with_on`] for the file at `path`.
 fn import_from(app: &mut VectorcraftApp, p: &Value, path: &str, background: bool) -> Result<Value, String> {
     let importer = p.get("importer").and_then(Value::as_str).ok_or("missing `importer` (see document.formats)")?;
@@ -455,6 +489,7 @@ fn import_from(app: &mut VectorcraftApp, p: &Value, path: &str, background: bool
     opened
 }
 
+#[cfg(feature = "plugins")]
 /// A file at `path` that only an importer plug-in reads (with `explicit`, the one named for it),
 /// larger than the importer's input limit: an error before the file is read. A file whose start
 /// shows a built-in format passes when no importer was named, since a built-in reader opens it.
@@ -481,6 +516,7 @@ fn check_import_size(path: &str, explicit: bool) -> Result<(), String> {
     Err(format!("can't open `{}`: {}", fileio::file_name(path), import::too_large()))
 }
 
+#[cfg(feature = "plugins")]
 #[cfg(target_arch = "wasm32")]
 fn check_import_size(_: &str, _: bool) -> Result<(), String> {
     Ok(())
@@ -597,6 +633,7 @@ fn open_file_with(app: &mut VectorcraftApp, path: &str, background: bool, p: &Va
         return Ok(Value::Null);
     }
     // A file only an importer plug-in reads is not read past the importer's input limit.
+    #[cfg(feature = "plugins")]
     check_import_size(path, false)?;
     let bytes = read(app, path)?;
     if background && opens_as(path).is_none() {

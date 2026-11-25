@@ -13,6 +13,11 @@ path = "src/main.rs"
 [lints]
 workspace = true
 
+[features]
+default = ["plugins"]
+# WebAssembly plug-ins (the engine's `plugins`). The KatWork build turns it off.
+plugins = ["vectorcraft-engine/plugins"]
+
 [dependencies]
 vectorcraft-color = { workspace = true }
 vectorcraft-doc = { workspace = true }

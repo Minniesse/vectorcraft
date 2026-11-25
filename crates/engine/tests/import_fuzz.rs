@@ -7958,6 +7958,7 @@ fn metafiles_saving_states_without_end_are_read_within_the_cap() {
     });
 }
 
+#[cfg(feature = "plugins")]
 #[test]
 fn deeply_nested_plugin_manifests_and_output_are_errors() {
     on_a_small_stack(|| {

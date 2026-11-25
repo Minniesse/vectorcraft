@@ -105,6 +105,7 @@ impl Session {
             dictionary_file: None,
             profile_dir: None,
             color_settings_file: None,
+            #[cfg(feature = "plugins")]
             plugin_dir: None,
             scripts_dir: None,
             metadata_templates_dir: None,
@@ -112,8 +113,11 @@ impl Session {
             proof_setup_dir: None,
             proof_setup_saves: 0,
             script_data_dir: None,
+            #[cfg(feature = "plugins")]
             plugin_output: None,
+            #[cfg(feature = "plugins")]
             plugin_install_approval: None,
+            #[cfg(feature = "plugins")]
             plugin_grants_from_requests: false,
             recent_urls: vec![],
             trace_preset_changes: Default::default(),

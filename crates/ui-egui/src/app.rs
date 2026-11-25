@@ -229,6 +229,7 @@ impl VectorcraftApp {
             save_pdf: None,
             object_dialogs: Default::default(),
             color_dialogs: Default::default(),
+            #[cfg(feature = "plugins")]
             plugin_dialog: None,
             addon_panels: Default::default(),
             addon_dialogs: Default::default(),
@@ -244,6 +245,7 @@ impl VectorcraftApp {
             prefs_changed: false,
             touch_screen: false,
             automation_roots: None,
+            #[cfg(feature = "plugins")]
             pending_plugin_install: None,
             pending_profile_open: None,
             queued_profile_opens: Default::default(),

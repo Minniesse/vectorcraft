@@ -1,5 +1,6 @@
 //! Window chrome: application bar (menus), Control bar, document tabs, status bar.
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::borrow::Cow;
 use std::cell::RefCell;
 

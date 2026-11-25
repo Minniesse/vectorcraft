@@ -1,6 +1,7 @@
 #[cfg(not(target_arch = "wasm32"))]
 use super::write_atomic;
 use super::{EngineError, Result, Session, Value, bad, json};
+use crate::plugin_host as vectorcraft_plugins;
 
 // ---------- the file system (none on the web, where commands take and return bytes) ----------
 //

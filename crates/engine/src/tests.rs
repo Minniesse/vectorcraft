@@ -147,6 +147,7 @@ mod perspgrid;
 mod pixelalign;
 mod place;
 mod placed_document;
+#[cfg(feature = "plugins")]
 mod plugins;
 mod prefs;
 mod prefs_file;

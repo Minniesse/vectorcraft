@@ -37,6 +37,10 @@ mod encode;
 pub mod eps;
 mod export;
 pub(crate) mod imagemap;
+#[cfg(feature = "plugins")]
+mod importer;
+#[cfg(not(feature = "plugins"))]
+#[path = "fileio/importer_off.rs"]
 mod importer;
 pub mod jxlread;
 mod legacy_ai;

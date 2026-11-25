@@ -58,11 +58,13 @@ fn open_ready(app: &mut VectorcraftApp) {
     poll(app);
 }
 
+#[cfg(feature = "plugins")]
 fn install_importer(app: &mut VectorcraftApp, src: &str) {
     let wasm = wat::parse_str(src).unwrap();
     app.run("plugin.install", json!({"dataBase64": vectorcraft_format::base64_encode(&wasm)})).unwrap();
 }
 
+#[cfg(feature = "plugins")]
 /// A file for the importers below, in a folder of its own.
 fn importer_file(tag: &str) -> (crate::tests_folder::Folder, String) {
     let dir = crate::tests_folder::Folder::new(&format!("ui-opening-{tag}"));
@@ -70,11 +72,13 @@ fn importer_file(tag: &str) -> (crate::tests_folder::Folder, String) {
     (dir, file)
 }
 
+#[cfg(feature = "plugins")]
 /// Open With off the UI thread: nothing opens until the importer has read the file with the
 /// parameters it was given; then the document opens and joins Open Recent, and a failure is
 /// reported in a dialog.
 #[test]
 fn open_with_runs_the_importer_off_the_ui_thread() {
+    #[cfg(feature = "plugins")]
     use vectorcraft_plugins::wat::{self as tpl, Given};
     let rect = r#"{"objects":[{"type":"path","path":{"subpaths":[{"closed":true,"anchors":[{"p":[10,20]},{"p":[110,20]},{"p":[110,70]},{"p":[10,70]}]}]}}]}"#;
     let (_dir, file) = importer_file("with");
@@ -103,9 +107,11 @@ fn open_with_runs_the_importer_off_the_ui_thread() {
     app.run("plugin.remove", json!({"id": "test.opening.with"})).unwrap();
 }
 
+#[cfg(feature = "plugins")]
 /// Cancel stops an importer that never returns, on the thread reading the file.
 #[test]
 fn cancel_stops_a_running_importer() {
+    #[cfg(feature = "plugins")]
     use vectorcraft_plugins::wat as tpl;
     let (_dir, file) = importer_file("cancel");
     let mut app = VectorcraftApp::new(Session::new(), Services::default());

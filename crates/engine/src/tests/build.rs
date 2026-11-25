@@ -8559,6 +8559,7 @@ fn a_trace_run_prepared_before_a_revert_does_not_apply_after_it() {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// A plug-in run that calls Image Trace and then fails leaves a trace handed in for the command in
 /// place, as it leaves the document.
 #[test]

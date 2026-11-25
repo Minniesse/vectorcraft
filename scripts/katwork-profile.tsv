@@ -1,0 +1,6 @@
+# <package> <native|wasm32> <katwork-features|-> <crate> <present|absent>: see scripts/katwork-profile.sh.
+# The KatWork CLI and web builds leave the WebAssembly plug-in host (vectorcraft-plugins, wasmi) out.
+vectorcraft-cli	native	-	vectorcraft-plugins	present
+vectorcraft-cli	native	-	wasmi	present
+vectorcraft-web	wasm32	-	vectorcraft-plugins	present
+vectorcraft-web	wasm32	-	wasmi	present

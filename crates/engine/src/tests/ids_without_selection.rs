@@ -1,6 +1,7 @@
 //! #1575: commands that take `ids` work on the objects given, with nothing selected; the
 //! selection is left as it was.
 
+use crate::plugin_host as vectorcraft_plugins;
 use serde_json::json;
 
 use crate::*;

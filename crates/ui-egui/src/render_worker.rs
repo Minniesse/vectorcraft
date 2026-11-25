@@ -4,6 +4,7 @@
 //! render synchronously so edits never lag behind overlays, after a first frame that renders here
 //! too: the UI thread waits for it only briefly (`canvas::raster::FIRST_FRAME_GRACE`).
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::sync::Arc;
 use std::sync::mpsc::{Receiver, Sender, channel};
 

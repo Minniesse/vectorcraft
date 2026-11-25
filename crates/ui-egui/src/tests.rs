@@ -25,7 +25,9 @@ mod pathtype;
 mod pdfoutput;
 pub(super) mod picks;
 mod place;
+#[cfg(feature = "plugins")]
 mod plugin_runs;
+#[cfg(feature = "plugins")]
 mod plugins;
 mod printps;
 mod printtiling;
@@ -57,6 +59,7 @@ pub(crate) mod taskbar;
 mod toolescape;
 mod trace_runs;
 
+#[cfg(feature = "plugins")]
 /// Installed plug-ins are process-wide. Tests that install filter plug-ins under a name another
 /// test also installs, or that check how plug-ins sharing a name are told apart, hold this lock
 /// while their plug-ins are installed, so each sees only its own plug-ins under that name.

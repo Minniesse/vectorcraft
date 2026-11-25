@@ -8,6 +8,8 @@
 //! without a panic. A bulk memory run traps exactly when a range leaves its region.
 //!
 //! `PROPTEST_CASES=2000 cargo test -p vectorcraft-engine --test plugin_fuzz` runs a deeper search.
+// The WebAssembly plug-in host: only with the `plugins` feature (on by default).
+#![cfg(feature = "plugins")]
 // Integration tests: unwrapping and panicking on failure is fine here, unlike in shipped code (AGENTS.md › Robustness).
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 

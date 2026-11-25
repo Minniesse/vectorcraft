@@ -36,6 +36,7 @@
 //! `channel` that the effect doesn't have are refused by `effect.apply` and `effect.setParams`
 //! themselves ([`check_effect_color`], [`check_effect_channel`]).
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::collections::HashMap;
 use std::sync::OnceLock;
 
@@ -276,6 +277,7 @@ pub(crate) fn uncached<T>(f: impl FnOnce() -> T) -> T {
     out
 }
 
+#[cfg(any(feature = "plugins", test))]
 /// Every key the description `doc` takes, those of the commands its `…` entries name included, or
 /// `None` when that isn't known: it doesn't parse, a `…` entry names no command, or one names a
 /// command in [`UNCHECKED`].

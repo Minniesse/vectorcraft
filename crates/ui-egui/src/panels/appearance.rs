@@ -15,6 +15,7 @@
 //! pick several fills/strokes or effects of one list for Duplicate and Delete. Delete on a selected
 //! Opacity row sets it back to Default (100%, Normal).
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::cell::RefCell;
 use std::collections::HashSet;
 use std::hash::Hash;

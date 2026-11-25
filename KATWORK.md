@@ -16,6 +16,31 @@ Based on VectorCraft by the ArtCraft team (https://github.com/storytold/vectorcr
 |---|---|
 | `fix(katwork): the color wheel's opacity row builds again` (the fork base did not compile; the file as upstream has it at 99f7de526) | not needed: already fixed upstream; dropped when the fork syncs |
 | `chore(katwork): remove the ArtCraft marks` | not proposed upstream (the brand terms let a fork that proposes changes keep the marks; this one is a distributed modified version) |
+| `feat(katwork): plugins feature, on by default` | draft, not opened (in the fork PR body) |
+
+## The `plugins` feature
+
+The WebAssembly plug-in host (`vectorcraft-plugins`, the wasmi interpreter) is the Cargo feature `plugins`, on by default in
+`vectorcraft-engine` (the `plugin.*` commands, the Plug-ins folder loaded at startup, exporter and importer plug-ins),
+`vectorcraft-effects` (live-effect plug-ins), `vectorcraft-render` (forwarding), `vectorcraft-ui-egui` (the plug-in menus,
+dialogs, install prompt and Help › Safe Mode), the CLI and the web app; the desktop app always turns it on. An upstream build
+is unchanged. KatWork builds the CLI and the web app with `--no-default-features` (no other feature): `vectorcraft-plugins`
+and `wasmi` are then in neither graph (`scripts/katwork-profile.sh`, CI job `katwork-profile`). Without it:
+
+- every `plugin.*` command is unknown (`list`, `info`, `install` with `dataBase64` or `path`, `inspect`, `run`, `remove`,
+  `reload`, and any `plugin.<plug-in id>.<command>` id); no plug-in loads at startup and the Plug-ins folder is never read;
+- a document that names a plug-in live effect (`plugin.<id>`) opens and draws as when that plug-in isn't installed (the
+  object keeps its geometry), and keeps the effect when saved;
+- File › Open With and exporter formats from plug-ins are absent; Install Plug-in… and Help › Safe Mode say plug-ins are not
+  available in this build;
+- the names the rest of the code takes from the plug-in crate come from inert stand-ins (`crates/engine/src/plugin_host.rs`,
+  `crates/engine/src/cmd/plugin_off.rs`, `crates/engine/src/cmd/fileio/importer_off.rs`,
+  `crates/ui-egui/src/dialogs/plugin_off.rs`, `crates/ui-egui/src/dialogs/safe_mode_off.rs`,
+  `crates/effects/src/plugin_host.rs`); the text helpers scripts share with plug-ins (`sha256_hex`, `display_text`) are the
+  same code, so scripts behave as before.
+
+The CLI and web app keep `vectorcraft-engine`'s `bundled-fonts` and `heif` as before (their manifests name them, not a
+default), so the KatWork build has HEIC/HEIF import as upstream's does.
 
 ## The marks
 

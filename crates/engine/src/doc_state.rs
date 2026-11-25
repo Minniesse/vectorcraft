@@ -2,6 +2,7 @@ use super::error::{EngineError, Result};
 use super::history::{History, HistoryEntry};
 use super::interaction::{Interaction, LastTransform, UndoGroup};
 use super::{Arc, Document, NodeId, NodeKind, Selection, Value, cmd, file_access};
+use crate::plugin_host as vectorcraft_plugins;
 
 /// Per-document editing state.
 #[derive(Clone, Debug)]

@@ -9,13 +9,18 @@ publish = false
 [lints]
 workspace = true
 
+[features]
+default = ["plugins"]
+# WebAssembly plug-ins (the engine's and the interface's `plugins`). The KatWork build turns it off.
+plugins = ["vectorcraft-engine/plugins", "vectorcraft-ui-egui/plugins"]
+
 [[bin]]
 name = "vectorcraft-web"
 path = "src/main.rs"
 
 [dependencies]
 vectorcraft-engine = { workspace = true, features = ["bundled-fonts", "heif"] }
-vectorcraft-ui-egui = { workspace = true }
+vectorcraft-ui-egui = { workspace = true, features = ["bundled-fonts", "interface-fonts"] }
 vectorcraft-format = { workspace = true }
 vectorcraft-text = { workspace = true }
 craft = { workspace = true, features = ["ui", "keymap", "automation", "platform"] }

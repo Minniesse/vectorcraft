@@ -35,16 +35,25 @@
 //! The files are untrusted input like any other: sizes and counts are capped, a file that does not
 //! parse is skipped with a log record, and every write is atomic.
 
+#[cfg(feature = "plugins")]
+use crate::plugin_host as vectorcraft_plugins;
+#[cfg(feature = "plugins")]
 use std::collections::{BTreeMap, BTreeSet};
 use std::io::Read;
 use std::path::{Path, PathBuf};
+#[cfg(feature = "plugins")]
 use std::sync::atomic::{AtomicBool, Ordering};
+#[cfg(feature = "plugins")]
 use std::sync::{Arc, Mutex, MutexGuard};
+#[cfg(feature = "plugins")]
 use std::time::SystemTime;
 
 use vectorcraft_pdf::{APP, PdfPreset, builtin_preset};
+#[cfg(feature = "plugins")]
 use vectorcraft_plugins::permissions::GrantToken;
+#[cfg(feature = "plugins")]
 use vectorcraft_plugins::safe_mode;
+#[cfg(feature = "plugins")]
 use vectorcraft_plugins::storage::{self, Meter, Storage, StorageError};
 
 use crate::Session;
@@ -60,48 +69,67 @@ pub const MAX_PROFILE_FILE: u64 = 32 << 20;
 pub const MAX_PROFILE_STORE: u64 = 256 << 20;
 /// The extension of a stored ICC profile.
 const PROFILE_EXT: &str = "icc";
+#[cfg(feature = "plugins")]
 /// The most stored plug-in bytes read at startup, all files together (the rest are skipped).
 pub const MAX_PLUGIN_STORE: u64 = 512 << 20;
+#[cfg(feature = "plugins")]
 /// The extension of a stored plug-in.
 const PLUGIN_EXT: &str = "wasm";
+#[cfg(feature = "plugins")]
 /// The file in the plug-in folder that lists the plug-ins the user disabled.
 pub const DISABLED_FILE: &str = "disabled.json";
+#[cfg(feature = "plugins")]
 /// The file in the plug-in folder that a window locks while it reads and changes the plug-in store
 /// ([`StoreTurn`]), [`DISABLED_FILE`] included.
 pub const DISABLED_LOCK: &str = "disabled.lock";
+#[cfg(feature = "plugins")]
 /// The file in the plug-in store that holds the permissions the user granted.
 const GRANTS_FILE: &str = "grants.json";
+#[cfg(feature = "plugins")]
 /// The error of a `plugin.remove` that can't remove the plug-in's grant from [`GRANTS_FILE`].
 pub(crate) const GRANT_NOT_REMOVED: &str = "the plug-in's grant can't be removed from the plug-in store";
+#[cfg(feature = "plugins")]
 /// The error of a change to the plug-in store that can't take its turn ([`StoreTurn`]).
 pub(crate) const STORE_NOT_LOCKED: &str = "the plug-in store can't be locked";
+#[cfg(feature = "plugins")]
 /// The largest grants file read.
 const MAX_GRANTS_FILE: u64 = 1 << 20;
+#[cfg(feature = "plugins")]
 /// The folder in the plug-in store that holds each plug-in's settings and cache.
 const PLUGIN_DATA_DIR: &str = "storage";
+#[cfg(feature = "plugins")]
 /// A plug-in's settings file, in its folder.
 const SETTINGS_FILE: &str = "settings.json";
+#[cfg(feature = "plugins")]
 /// Where a settings file that doesn't read is moved, replacing the one moved there before.
 const BAD_SETTINGS_FILE: &str = "settings.unreadable.json";
+#[cfg(feature = "plugins")]
 /// The folder of a plug-in's cache entries, in its folder.
 const CACHE_DIR: &str = "cache";
+#[cfg(feature = "plugins")]
 /// The extension of a cache entry's file.
 const CACHE_EXT: &str = "bin";
+#[cfg(feature = "plugins")]
 /// Items in a cache folder a write looks at, at most: the entries, and temporary files a write left.
 /// A write to a folder that holds more is refused as full.
 pub(crate) const MAX_CACHE_SCAN: usize = storage::MAX_CACHE_ENTRIES * 2;
+#[cfg(feature = "plugins")]
 /// Held while a plug-in's settings or cache change, so two runs can't pass a cap together or lose
 /// each other's settings. Taken after the plug-in store's turn ([`StoreTurn`]), never before it.
 static PLUGIN_DATA_LOCK: Mutex<()> = Mutex::new(());
+#[cfg(feature = "plugins")]
 /// The state of each plug-in folder's storage, shared by every storage made for the folder until
 /// the plug-in is removed, which closes it and drops it.
 static PLUGIN_DATA_OPEN: Mutex<BTreeMap<PathBuf, Arc<PluginData>>> = Mutex::new(BTreeMap::new());
+#[cfg(feature = "plugins")]
 /// The grants of plug-in stores that the sessions of the process don't count, and when each was
 /// last written ([`IgnoredGrants`]). Another process reads `grants.json` as it is.
 static IGNORED_PLUGIN_GRANTS: Mutex<IgnoredGrants> = Mutex::new(IgnoredGrants { ignored: BTreeSet::new(), written: BTreeMap::new(), writes: 0 });
+#[cfg(feature = "plugins")]
 /// How many of the latest grant writes [`IgnoredGrants`] keeps.
 const MAX_GRANT_WRITES_KEPT: usize = 256;
 
+#[cfg(feature = "plugins")]
 /// Grants of plug-in stores, by the store's folder ([`plugin_store_key`]) and the plug-in id.
 struct IgnoredGrants {
     /// The grants that should be gone but could not be removed: no session in the process counts
@@ -125,6 +153,7 @@ pub(crate) fn file_stem(name: &str) -> String {
     format!("{}-{hash:016x}", safe.trim())
 }
 
+#[cfg(feature = "plugins")]
 /// The folder `dir` spelled one way for every path to it, so that sessions attached to it by
 /// different paths share [`IGNORED_PLUGIN_GRANTS`]: the canonical path when the folder exists, else
 /// the canonical path of its nearest folder that exists followed by the rest of the path, with `.`
@@ -228,6 +257,7 @@ fn write_atomic(_: &Path, _: &[u8]) -> std::io::Result<()> {
 /// another window or process holds it, or another handle in this process. The file is opened for
 /// reading and writing (a handle that only appends can't be locked on Windows) and is never
 /// replaced or removed, so that every window locks the same file.
+#[cfg(feature = "plugins")]
 #[cfg(not(target_arch = "wasm32"))]
 fn lock_store(dir: &Path) -> std::io::Result<std::fs::File> {
     std::fs::create_dir_all(dir)?;
@@ -246,11 +276,13 @@ fn lock_store(dir: &Path) -> std::io::Result<std::fs::File> {
 }
 
 /// The browser has no folders to keep anything in.
+#[cfg(feature = "plugins")]
 #[cfg(target_arch = "wasm32")]
 fn lock_store(_: &Path) -> std::io::Result<std::fs::File> {
     Err(std::io::Error::new(std::io::ErrorKind::Unsupported, "no file system"))
 }
 
+#[cfg(feature = "plugins")]
 /// A turn on a plug-in store ([`Session::plugin_store_turn`]): while it is held, no other window or
 /// process that takes one reads and changes the store's plug-ins, grants, disabled list, settings
 /// or caches. Dropping it ends the turn. A turn is taken once per operation and handed to the
@@ -261,6 +293,7 @@ pub(crate) struct StoreTurn {
     lock: Option<std::fs::File>,
 }
 
+#[cfg(feature = "plugins")]
 impl StoreTurn {
     /// A turn that isn't held, for a load that goes ahead without one: it writes nothing.
     pub(crate) fn unheld() -> Self {
@@ -303,13 +336,13 @@ thread_local! {
 /// Remove `dir/file` → whether it is gone; a file that isn't there is what was wanted.
 fn take(dir: &Path, file: &str) -> bool {
     let path = dir.join(file);
-    #[cfg(test)]
+    #[cfg(all(test, feature = "plugins"))]
     let removed = if file == GRANTS_FILE && GRANTS_DELETE_FAILS.get() {
         Err(std::io::Error::from(std::io::ErrorKind::PermissionDenied))
     } else {
         std::fs::remove_file(&path)
     };
-    #[cfg(not(test))]
+    #[cfg(not(all(test, feature = "plugins")))]
     let removed = std::fs::remove_file(&path);
     match removed {
         Err(e) if e.kind() != std::io::ErrorKind::NotFound => {
@@ -443,7 +476,18 @@ impl Session {
         let (Some(dir), Some(file)) = (path.parent(), path.file_name().and_then(|f| f.to_str())) else { return false };
         serde_json::to_vec_pretty(settings).is_ok_and(|bytes| put(dir, file, &bytes))
     }
+}
 
+#[cfg(not(feature = "plugins"))]
+impl Session {
+    /// No plug-in store: plug-ins are not available in this build, so nothing is kept or installed.
+    pub fn attach_plugin_store(&mut self, dir: PathBuf) {
+        drop(dir);
+    }
+}
+
+#[cfg(feature = "plugins")]
+impl Session {
     /// Keep the plug-ins this session installs in `dir`, take the disabled plug-ins saved there
     /// ([`DISABLED_FILE`]), and install the stored ones ([`Session::load_stored_plugins`]).
     pub fn attach_plugin_store(&mut self, dir: PathBuf) {
@@ -934,6 +978,7 @@ impl Session {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// `name` (a plug-in id or a cache entry name, ASCII) written for a file name that no other name
 /// gets on a file system that ignores case: `_` is written `__`, each capital letter `_` and the
 /// letter in lower case, and `.` `_0`.
@@ -953,12 +998,14 @@ fn case_safe(name: &str) -> String {
     file
 }
 
+#[cfg(feature = "plugins")]
 /// The folder of plug-in `id`'s settings and cache in the plug-in store `dir`. The `id-` in front
 /// keeps an id such as `con` from naming a device on Windows.
 pub(crate) fn plugin_data_dir(dir: &Path, id: &str) -> PathBuf {
     dir.join(PLUGIN_DATA_DIR).join(format!("id-{}", case_safe(id)))
 }
 
+#[cfg(feature = "plugins")]
 /// `path` with `suffix` added to its last part.
 fn suffixed(path: &Path, suffix: &str) -> PathBuf {
     let mut named = path.as_os_str().to_os_string();
@@ -966,6 +1013,7 @@ fn suffixed(path: &Path, suffix: &str) -> PathBuf {
     PathBuf::from(named)
 }
 
+#[cfg(feature = "plugins")]
 /// Where [`Session::remove_plugin_storage`] moves the plug-in folder `path` out of the way:
 /// `<path>.removed`, and `<path>.removing` while `<path>.removed` holds settings and cache an
 /// earlier removal kept ([`is_kept`]). The second one, when it is there, is the newer.
@@ -973,18 +1021,21 @@ fn aside_paths(path: &Path) -> [PathBuf; 2] {
     [suffixed(path, ".removed"), suffixed(path, ".removing")]
 }
 
+#[cfg(feature = "plugins")]
 /// `<aside>.delete`: an empty file written next to the folder `aside` before it is deleted, so
 /// that what a failed deletion leaves there is not taken for settings a removal kept.
 fn delete_marker(aside: &Path) -> PathBuf {
     suffixed(aside, ".delete")
 }
 
+#[cfg(feature = "plugins")]
 /// Does `aside` hold settings and cache that a removal kept: a folder, or a link in place of one,
 /// without a [`delete_marker`] beside it?
 fn is_kept(aside: &Path) -> bool {
     std::fs::symlink_metadata(aside).is_ok_and(|m| !m.is_file()) && std::fs::symlink_metadata(delete_marker(aside)).is_err()
 }
 
+#[cfg(feature = "plugins")]
 /// Write the empty file `marker` ([`delete_marker`]).
 fn write_delete_marker(marker: &Path) -> std::io::Result<()> {
     #[cfg(test)]
@@ -994,6 +1045,7 @@ fn write_delete_marker(marker: &Path) -> std::io::Result<()> {
     std::fs::write(marker, b"")
 }
 
+#[cfg(feature = "plugins")]
 /// Delete the folder `aside` (a file there is left), writing its [`delete_marker`] first and
 /// removing it once the folder is gone; what the deletion can't remove stays, with a log record.
 /// When the marker can't be written, nothing is deleted, so that the folder stays whole.
@@ -1021,6 +1073,7 @@ fn delete_aside(aside: &Path) {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// Rename the plug-in folder at `aside` back to `path`.
 fn move_back(aside: &Path, path: &Path) -> std::io::Result<()> {
     #[cfg(test)]
@@ -1030,6 +1083,7 @@ fn move_back(aside: &Path, path: &Path) -> std::io::Result<()> {
     std::fs::rename(aside, path)
 }
 
+#[cfg(feature = "plugins")]
 /// Move the newest settings and cache that a removal kept ([`aside_paths`], [`is_kept`]) back to
 /// the plug-in folder `path` when there is none. When `path` is there, it is used and the kept
 /// folders are left as they are, with a log record, until the plug-in's removal deletes them.
@@ -1046,6 +1100,7 @@ fn restore_removed(path: &Path) -> std::io::Result<()> {
     kept.next().map_or(Ok(()), |aside| move_back(aside, path))
 }
 
+#[cfg(feature = "plugins")]
 /// Where plug-in `id` keeps its settings and cache in the plug-in store `dir`. Settings and cache
 /// that a removal kept are moved back first ([`restore_removed`]); when that fails, the failure is
 /// logged and there is no storage (its calls fail as unavailable), so that nothing the plug-in
@@ -1067,9 +1122,11 @@ fn plugin_storage(dir: Option<&Path>, id: &str, turn: &StoreTurn) -> Option<Arc<
     Some(Arc::new(PluginStorage { root: dir.to_path_buf(), dir: data, state }))
 }
 
+#[cfg(feature = "plugins")]
 /// A file's size and modified time (`None`: there is no file).
 type FileStamp = Option<(u64, SystemTime)>;
 
+#[cfg(feature = "plugins")]
 /// The stamp of the file at `path`.
 fn file_stamp(path: &Path) -> Result<FileStamp, StorageError> {
     match std::fs::metadata(path) {
@@ -1079,11 +1136,13 @@ fn file_stamp(path: &Path) -> Result<FileStamp, StorageError> {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// The modified time of the folder at `dir` (`None`: it can't be read, or there is no folder).
 fn folder_stamp(dir: &Path) -> Option<SystemTime> {
     std::fs::symlink_metadata(dir).ok()?.modified().ok()
 }
 
+#[cfg(feature = "plugins")]
 /// What every storage made for one plug-in folder shares ([`PLUGIN_DATA_OPEN`]).
 #[derive(Default)]
 struct PluginData {
@@ -1092,6 +1151,7 @@ struct PluginData {
     kept: Mutex<Kept>,
 }
 
+#[cfg(feature = "plugins")]
 /// What the folder's files last held in this process.
 #[derive(Default)]
 struct Kept {
@@ -1099,12 +1159,14 @@ struct Kept {
     cache: Option<KeptCache>,
 }
 
+#[cfg(feature = "plugins")]
 /// The settings by key, and the settings file's stamp when they were read or written.
 struct KeptSettings {
     stamp: FileStamp,
     values: BTreeMap<String, Vec<u8>>,
 }
 
+#[cfg(feature = "plugins")]
 /// The bytes of the cache entries, and the cache folder's stamp when they were added up.
 #[derive(Clone, Copy)]
 struct KeptCache {
@@ -1112,6 +1174,7 @@ struct KeptCache {
     bytes: u64,
 }
 
+#[cfg(feature = "plugins")]
 /// The settings and cache of one plug-in, in its folder of the plug-in store (see the module docs).
 /// Keys and entry names are [`storage::valid_name`]s; an entry's file name is its name as
 /// [`case_safe`] writes it, so that names differing only in case get different files. A link
@@ -1126,22 +1189,26 @@ pub(crate) struct PluginStorage {
     state: Arc<PluginData>,
 }
 
+#[cfg(feature = "plugins")]
 /// The sizes of `files` added up, at most `u64::MAX`: the sizes come from the file system.
 fn sum_sizes(files: &[(PathBuf, u64)]) -> u64 {
     files.iter().fold(0, |sum, (_, n)| sum.saturating_add(*n))
 }
 
+#[cfg(feature = "plugins")]
 /// Is `name` the file name of a cache entry? Entry files end in `.bin` and never start with a `.`
 /// ([`case_safe`] writes no `.`), while the temporary files of `write_atomic` do.
 fn is_entry_file(name: &std::ffi::OsStr) -> bool {
     name.to_str().is_some_and(|n| !n.starts_with('.') && n.ends_with(&format!(".{CACHE_EXT}")))
 }
 
+#[cfg(feature = "plugins")]
 /// What a storage call is told when the file system fails.
 fn io(e: &std::io::Error) -> StorageError {
     StorageError::Io(e.to_string())
 }
 
+#[cfg(feature = "plugins")]
 /// Does grant `g` cover `plugin`: was it given to this module (the same id and SHA-256) for every
 /// permission the module lists? A module with other bytes under the id needs the user's approval
 /// again, and so doesn't get the settings and cache kept for the id without it. A grant whose hash
@@ -1151,11 +1218,13 @@ fn grant_covers(g: &vectorcraft_plugins::permissions::Grant, plugin: &vectorcraf
     g.covers(&m.id, plugin.hash(), &m.permissions())
 }
 
+#[cfg(feature = "plugins")]
 /// Is `path` a link (a symbolic link or, on Windows, a junction)?
 fn is_link(path: &Path) -> bool {
     std::fs::symlink_metadata(path).is_ok_and(|m| m.file_type().is_symlink() || reparse_point(&m))
 }
 
+#[cfg(feature = "plugins")]
 #[cfg(windows)]
 fn reparse_point(m: &std::fs::Metadata) -> bool {
     use std::os::windows::fs::MetadataExt;
@@ -1163,11 +1232,13 @@ fn reparse_point(m: &std::fs::Metadata) -> bool {
     m.file_attributes() & FILE_ATTRIBUTE_REPARSE_POINT != 0
 }
 
+#[cfg(feature = "plugins")]
 #[cfg(not(windows))]
 fn reparse_point(_: &std::fs::Metadata) -> bool {
     false
 }
 
+#[cfg(feature = "plugins")]
 impl PluginStorage {
     fn settings_path(&self) -> PathBuf {
         self.dir.join(SETTINGS_FILE)
@@ -1325,6 +1396,7 @@ impl PluginStorage {
     }
 }
 
+#[cfg(feature = "plugins")]
 impl Storage for PluginStorage {
     fn setting(&self, key: &str, meter: &mut Meter) -> Result<Option<Vec<u8>>, StorageError> {
         // Reading may move a settings file that doesn't read aside.
@@ -1463,6 +1535,7 @@ impl Storage for PluginStorage {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// What the grants file of a plug-in store holds.
 #[derive(Default)]
 struct GrantsFile {
@@ -1472,6 +1545,7 @@ struct GrantsFile {
     other: Vec<serde_json::Value>,
 }
 
+#[cfg(feature = "plugins")]
 impl GrantsFile {
     /// Whether the file has an entry for the plug-in `id`, usable by this version or not.
     fn names(&self, id: &str) -> bool {
@@ -1479,6 +1553,7 @@ impl GrantsFile {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// Why the grants file of a plug-in store gave no grants.
 struct GrantsError {
     /// Opening or reading the file failed, so what it holds is unknown. When `false`, the file is
@@ -1488,6 +1563,7 @@ struct GrantsError {
     why: String,
 }
 
+#[cfg(feature = "plugins")]
 /// The grants file of the plug-in store `dir`: empty when there is none, an error when it is too
 /// large, can't be read or doesn't hold a list. An entry that doesn't parse as a grant, or names an
 /// invalid id, is kept in [`GrantsFile::other`] with a log record.
@@ -1522,6 +1598,7 @@ fn read_grants(dir: &Path) -> Result<GrantsFile, GrantsError> {
     Ok(file)
 }
 
+#[cfg(feature = "plugins")]
 /// The grants kept in the plug-in store `dir` that this version can use, by plug-in id: none when
 /// there is no grants file, and none, with a log record, when it is too large, can't be read or
 /// doesn't hold a list.

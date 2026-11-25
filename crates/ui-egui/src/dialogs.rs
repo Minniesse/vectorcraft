@@ -103,6 +103,10 @@ pub mod perspective_presets;
 pub mod pixel_snap_options;
 pub mod place;
 pub mod placement_options;
+#[cfg(feature = "plugins")]
+pub mod plugin;
+#[cfg(not(feature = "plugins"))]
+#[path = "dialogs/plugin_off.rs"]
 pub mod plugin;
 mod png_options;
 pub(crate) mod preset_manager;
@@ -122,6 +126,10 @@ pub mod rename_artboards;
 pub(crate) mod revolve;
 pub(crate) mod revolve_gizmo;
 pub(crate) mod revolve_lights;
+#[cfg(feature = "plugins")]
+pub mod safe_mode;
+#[cfg(not(feature = "plugins"))]
+#[path = "dialogs/safe_mode_off.rs"]
 pub mod safe_mode;
 pub mod saturate;
 pub mod save_brush_library;
@@ -202,11 +210,11 @@ mod tests_import_pdf;
 mod tests_messages;
 #[cfg(test)]
 mod tests_package;
-#[cfg(test)]
+#[cfg(all(test, feature = "plugins"))]
 mod tests_plugin_export;
-#[cfg(test)]
+#[cfg(all(test, feature = "plugins"))]
 mod tests_plugin_fields;
-#[cfg(test)]
+#[cfg(all(test, feature = "plugins"))]
 mod tests_plugin_import;
 #[cfg(test)]
 mod tests_raster_formats;

@@ -91,6 +91,7 @@ impl AutomationRoots {
         Ok(Some(Arc::new(Self { read: open(read, Access::Read)?, write: open(write, Access::Write)? })))
     }
 
+    #[cfg(any(feature = "plugins", test))]
     /// Roots that grant no access of either kind: inside [`confine`] with them, every path a
     /// command reads or writes is refused.
     pub(crate) fn none() -> Arc<Self> {

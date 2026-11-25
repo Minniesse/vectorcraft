@@ -75,6 +75,10 @@ pub mod patternlib;
 pub mod pdfcmds;
 pub mod perspgrid;
 pub mod place;
+#[cfg(feature = "plugins")]
+pub mod plugin;
+#[cfg(not(feature = "plugins"))]
+#[path = "cmd/plugin_off.rs"]
 pub mod plugin;
 pub(crate) mod plugin_call;
 mod preflight;

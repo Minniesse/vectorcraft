@@ -67,6 +67,10 @@ pub mod panels;
 pub mod place;
 pub mod placing;
 pub mod plugin_runs;
+#[cfg(feature = "plugins")]
+pub(crate) use vectorcraft_plugins as plugin_host;
+#[cfg(not(feature = "plugins"))]
+mod plugin_host;
 pub mod prefs_dialog;
 pub mod print;
 pub mod recovery;
@@ -292,6 +296,7 @@ pub struct VectorcraftApp {
     pub(crate) object_dialogs: dialogs::object_dialogs::ObjectDialogs,
     /// The open dialogs of the colour area.
     pub(crate) color_dialogs: dialogs::color_picker::ColorDialogs,
+    #[cfg(feature = "plugins")]
     /// The plug-in dialog, while one is open.
     pub(crate) plugin_dialog: Option<dialogs::plugin::PluginDialog>,
     /// The add-on panels' session state.
@@ -326,6 +331,7 @@ pub struct VectorcraftApp {
     /// (`--automation-read-root`, `--automation-write-root`); `None`: anywhere. See
     /// [`Self::with_automation_roots`].
     automation_roots: Option<Arc<AutomationRoots>>,
+    #[cfg(feature = "plugins")]
     /// The plug-in install the approval dialog asks about, kept out of the dialog's fields, which
     /// `ui.dialog.set` writes.
     pub(crate) pending_plugin_install: Option<dialogs::plugin::PendingInstall>,

@@ -2,16 +2,22 @@
 //! manifest ([`plugin_params`]) and the JSON ↔ dialog values pair ([`fields_of`], [`json_of`]) that hosted parameter
 //! dialogs use.
 
+use crate::plugin_host as vectorcraft_plugins;
+#[cfg(feature = "plugins")]
 use std::collections::HashMap;
 
-use craft::ui::contract::{Bind, Show as _, ShowContainer as _};
+use craft::ui::contract::ShowContainer as _;
+#[cfg(feature = "plugins")]
+use craft::ui::contract::{Bind, Show as _};
 use craft::ui::layout_components::Stack;
 use craft::ui::patterns::form_dialogs::{DialogFields, FieldValue, Param, ParamKind, encode};
 use craft::ui::runtime::env::{Label, LengthUnits, UnitKind};
 use craft::ui::runtime::measure;
+#[cfg(feature = "plugins")]
 use craft::ui::text::TextField;
 use craft::ui::value_drag::SliderScale;
 use serde_json::{Map, Value, json};
+#[cfg(feature = "plugins")]
 use vectorcraft_plugins::{Manifest, Param as PluginParam, ParamSpec};
 
 /// The fields of the form dialogs ([`grid_params`]) that are distances, by dialog kind.
@@ -246,6 +252,7 @@ pub(crate) fn typed_number(x: f64) -> Value {
     if x.fract() == 0.0 && x.abs() < 1e15 { json!(x as i64) } else { json!(x) }
 }
 
+#[cfg(feature = "plugins")]
 /// The unit a plug-in names, as the framework spells it; `None` for a unit it has no kind for.
 fn unit_kind(unit: &str) -> Option<UnitKind> {
     match unit {
@@ -260,6 +267,7 @@ fn unit_kind(unit: &str) -> Option<UnitKind> {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// A row of a text field whose text `read` turns into the row's value (`None`: the text is not a value and the row
 /// keeps what it had), shown by `shown`; for the values no framework row types: a number list, a whole number past
 /// what a number field holds exactly, a text with a length limit.
@@ -283,6 +291,7 @@ fn text_row(
     .opens_with(start)
 }
 
+#[cfg(feature = "plugins")]
 /// The row of the plug-in parameter `key`, without its visibility.
 fn plugin_row(key: &str, p: &PluginParam) -> Param {
     let unit_text = p.ui.unit.as_deref().unwrap_or_default();
@@ -365,6 +374,7 @@ fn plugin_row(key: &str, p: &PluginParam) -> Param {
 /// one's conditions ready.
 // PLAN: the values are not read here (the rows hide themselves from the dialog's values); the contract's signature
 // keeps the parameter.
+#[cfg(feature = "plugins")]
 pub(crate) fn plugin_params(manifest: &Manifest, _fields: &Map<String, Value>) -> Vec<Param> {
     let mut conditions: HashMap<&str, Vec<(String, Vec<FieldValue>)>> = HashMap::new();
     for (name, p) in &manifest.params {
@@ -391,6 +401,7 @@ pub(crate) fn plugin_params(manifest: &Manifest, _fields: &Map<String, Value>) -
     rows
 }
 
+#[cfg(feature = "plugins")]
 /// Opens the help page `link` of a plug-in parameter (`ParamRowsOutput::help_link`). The browser is another app: a
 /// click automation sent opens nothing.
 pub(crate) fn open_help(app: &mut crate::VectorcraftApp, link: &str) {
@@ -399,6 +410,7 @@ pub(crate) fn open_help(app: &mut crate::VectorcraftApp, link: &str) {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// A `numberList` value as its field shows it: "45, 135".
 pub(crate) fn number_list_text(cur: &Value) -> String {
     let numbers: Vec<String> = cur.as_array().into_iter().flatten().filter_map(Value::as_f64).map(number_text).collect();
@@ -408,6 +420,7 @@ pub(crate) fn number_list_text(cur: &Value) -> String {
 /// The list typed in a `numberList` parameter's field: numbers separated by commas, semicolons or
 /// spaces, each clamped into the parameter's range. `None` (the value stays as it was) when a
 /// number doesn't read, there are too few or too many, or `spec` isn't a number list.
+#[cfg(feature = "plugins")]
 pub(crate) fn read_number_list(text: &str, spec: &ParamSpec) -> Option<Value> {
     let ParamSpec::NumberList { min, max, min_items, max_items, .. } = spec else { return None };
     let parts = text.split([',', ';', ' ']).filter(|p| !p.trim().is_empty());
@@ -415,6 +428,7 @@ pub(crate) fn read_number_list(text: &str, spec: &ParamSpec) -> Option<Value> {
     (*min_items..=*max_items).contains(&list.len()).then(|| json!(list.into_iter().map(|x| x.clamp(*min, *max)).collect::<Vec<f64>>()))
 }
 
+#[cfg(feature = "plugins")]
 /// A number of a list as its field shows it: at most 4 decimals, without trailing zeros.
 fn number_text(x: f64) -> String {
     let s = format!("{x:.4}");
@@ -514,6 +528,7 @@ mod plugin_field_tests {
         }
     }
 
+    #[cfg(feature = "plugins")]
     #[test]
     fn number_lists_read_as_typed_within_their_limits() {
         let spec = ParamSpec::NumberList { min: 0.0, max: 360.0, default: vec![45.0], min_items: 1, max_items: 3 };

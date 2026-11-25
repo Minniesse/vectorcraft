@@ -3,6 +3,7 @@
 //! folder, the script's data folder and what a person allowed in a file dialog, and the grants kept
 //! for a script.
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::path::{Path, PathBuf};
 
 use serde_json::{Value, json};

@@ -13,6 +13,7 @@
 //! one of them, or that cannot read a subfolder or an entry of a folder, keeps what it found and
 //! says so ([`Listing::truncated`]).
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::io::Read;
 use std::path::{Component, Path, PathBuf};
 use std::time::Duration;

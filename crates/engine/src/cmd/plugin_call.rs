@@ -19,16 +19,23 @@
 //! [`reviewed::ALLOWED`] lists it, so a command added to the registry later is refused until
 //! someone decides.
 
+#[cfg(feature = "plugins")]
 mod reviewed;
 
+#[cfg(feature = "plugins")]
+use crate::plugin_host as vectorcraft_plugins;
+#[cfg(feature = "plugins")]
 use std::sync::Arc;
 
 use serde_json::Value;
+#[cfg(feature = "plugins")]
 use vectorcraft_plugins::host::{CALL_COMMAND_FAILED, CALL_DENIED_COMMAND, CALL_DISABLED, CALL_UNKNOWN_COMMAND, CallFailure};
 
 use super::CommandSpec;
+#[cfg(feature = "plugins")]
 use crate::{EngineError, Result, Session};
 
+#[cfg(feature = "plugins")]
 /// Command ids a plug-in may never call, by their start: plug-ins, scripts and actions, files,
 /// documents and links, the clipboard, preferences, the view and the app, and the undo history.
 const DENIED_PREFIXES: &[&str] = &[
@@ -82,6 +89,7 @@ const DENIED_PREFIXES: &[&str] = &[
     "transparency.toggleNewMasks",
 ];
 
+#[cfg(feature = "plugins")]
 /// Words in a command id that name a file or the clipboard (any case): a command with one of them
 /// in its id may read or write a file a plug-in can't see.
 const FILE_WORDS: &[&str] = &[
@@ -268,6 +276,7 @@ const NESTED_NOT_FILES: &[(&str, &[&str])] = &[
     ("imageTrace.makeAndExpand", &["savedPreset", "paths"]),
 ];
 
+#[cfg(feature = "plugins")]
 /// Does `spec` take `key` as a param: its params description names it as one of its keys, or one
 /// of the commands its `…` entries name does ([`super::params::accepted_keys`]), or its schema has
 /// it? When the description doesn't say which keys it takes, any `key:` in its text counts
@@ -276,6 +285,7 @@ fn takes_param(spec: &CommandSpec, key: &str) -> bool {
     spec.schema.is_some_and(|s| s.params.iter().any(|p| p.name == key)) || described_param(spec.params, key)
 }
 
+#[cfg(feature = "plugins")]
 /// [`takes_param`] for the params description `doc` alone.
 fn described_param(doc: &'static str, key: &str) -> bool {
     match super::params::accepted_keys(doc) {
@@ -284,6 +294,7 @@ fn described_param(doc: &'static str, key: &str) -> bool {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// Is command id `id` one a plug-in may never call, from its id alone ([`DENIED_PREFIXES`],
 /// [`FILE_WORDS`])?
 fn denied_id(id: &str) -> bool {
@@ -291,6 +302,7 @@ fn denied_id(id: &str) -> bool {
     DENIED_PREFIXES.iter().any(|p| id.starts_with(p)) || FILE_WORDS.iter().any(|w| lower.contains(w))
 }
 
+#[cfg(feature = "plugins")]
 /// Why a plug-in may never call `spec`, or `None` when it may (when its manifest lists it): its id
 /// or a file key ([`denied_by_rule`]), [`reviewed::DENIED`], or no place in [`reviewed::ALLOWED`].
 pub(crate) fn denied(spec: &CommandSpec) -> Option<&'static str> {
@@ -306,6 +318,7 @@ pub(crate) fn denied(spec: &CommandSpec) -> Option<&'static str> {
     None
 }
 
+#[cfg(feature = "plugins")]
 /// Why a plug-in may never call `spec` from its id ([`denied_id`]) or its params (a param in
 /// [`FILE_KEYS`], [`takes_param`], that [`NOT_FILES`] doesn't name for it), or `None`.
 fn denied_by_rule(spec: &CommandSpec) -> Option<&'static str> {
@@ -319,6 +332,7 @@ fn denied_by_rule(spec: &CommandSpec) -> Option<&'static str> {
     None
 }
 
+#[cfg(feature = "plugins")]
 /// The ids `m`'s `commandAllowlist` names that no command has (a later version may add them; a
 /// call of one fails), and those a plug-in may never call ([`denied`]).
 pub(crate) fn check_allowlist(m: &vectorcraft_plugins::Manifest) -> (Vec<&str>, Vec<&str>) {
@@ -334,6 +348,7 @@ pub(crate) fn check_allowlist(m: &vectorcraft_plugins::Manifest) -> (Vec<&str>, 
     (unknown, refused)
 }
 
+#[cfg(feature = "plugins")]
 /// Does params text `text` name the key `key`: `key:` or `key?:`, not as the end of a longer word?
 pub(crate) fn names_key(text: &str, key: &str) -> bool {
     text.match_indices(key).any(|(at, _)| {
@@ -343,6 +358,7 @@ pub(crate) fn names_key(text: &str, key: &str) -> bool {
     })
 }
 
+#[cfg(feature = "plugins")]
 /// Does `args`, the arguments of a call of command `id`, carry a key that names a file or a folder at
 /// any depth (in objects and in arrays, [`ParamsPlace`]), such as an effect's `textureImage.path`?
 /// Only a key [`NOT_FILES`] names for `id`, at the top level, and one at the end of a
@@ -369,10 +385,12 @@ fn names_file(id: &str, args: &Value) -> bool {
     false
 }
 
+#[cfg(feature = "plugins")]
 /// Param keys whose value names an effect or a command (`id` is `effect.apply`'s other name for
 /// `effect`).
 const PLUGIN_KEYS: &[&str] = &["effect", "effects", "id", "command", "commands"];
 
+#[cfg(feature = "plugins")]
 /// Does `v` name a plug-in anywhere: an effect or a command ([`PLUGIN_KEYS`]) whose id starts with
 /// `plugin.`, at any depth? A call that does is refused, so a plug-in never runs another, or
 /// itself. Other strings, such as text, may start with `plugin.`.
@@ -380,6 +398,7 @@ fn names_plugin(v: &Value) -> bool {
     names_plugin_in(v, false)
 }
 
+#[cfg(feature = "plugins")]
 /// [`names_plugin`] for `v`, the value of a key in [`PLUGIN_KEYS`] (or an item of one) when
 /// `named`.
 fn names_plugin_in(v: &Value, named: bool) -> bool {
@@ -391,6 +410,7 @@ fn names_plugin_in(v: &Value, named: bool) -> bool {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// Commits an edit in progress in the active document (not a preview's), as [`transaction`] does →
 /// whether that changed the document or its selection. A run that calls commands is prepared again
 /// then, so its input is the document its calls change.
@@ -403,6 +423,7 @@ pub(crate) fn settle(s: &mut Session) -> Result<bool> {
     Ok(s.active().is_none_or(|d| !Arc::ptr_eq(&before.0, &d.doc) || before.1 != d.selection))
 }
 
+#[cfg(feature = "plugins")]
 /// What a run that makes command calls keeps fixed: the document it runs in, the documents open,
 /// whether an interaction holds its changes (its own, or a preview's), and whether the plug-in may
 /// read and change the document.
@@ -414,6 +435,7 @@ pub(crate) struct Calls {
     may_write: bool,
 }
 
+#[cfg(feature = "plugins")]
 impl Calls {
     /// The run's fixed state in `s` as it is now; `may_read` and `may_write` are whether it has
     /// `doc.read` and `doc.write`.
@@ -431,6 +453,7 @@ impl Calls {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// Makes plug-in call `id` with `args` in `s` → its result, or why it didn't run or failed. A
 /// command a plug-in may never call ([`denied`]), one whose args name a plug-in, one that changes
 /// which documents are open or active or ends the run's edit, and one that changes the document for
@@ -461,6 +484,7 @@ pub(crate) fn call(s: &mut Session, run: &Calls, id: &str, args: &Value) -> std:
     Ok(value)
 }
 
+#[cfg(feature = "plugins")]
 /// Runs command `id` with `args` in `s` with no file or folder readable or writable: every path the
 /// command reaches through the checked file access ([`crate::file_access`]) is refused, whatever
 /// param carries it.
@@ -468,6 +492,7 @@ fn execute_confined(s: &mut Session, id: &str, args: &Value) -> Result<Value> {
     crate::file_access::confine(Some(&crate::file_access::AutomationRoots::none()), || s.execute(id, args))
 }
 
+#[cfg(feature = "plugins")]
 /// Runs `f`, a plug-in run that makes command calls, as one undo step named `label` in the active
 /// document: the commands it calls and the output it applies change the document inside one
 /// interaction, which is kept when `f` succeeds. When `f` fails, every document goes back to how it
@@ -518,6 +543,7 @@ pub(crate) fn transaction(s: &mut Session, label: &str, f: impl FnOnce(&mut Sess
     }
 }
 
+#[cfg(feature = "plugins")]
 /// The session state outside the documents that a command a plug-in may call changes: the paint
 /// defaults and the colors it remembers, the drawing mode, the clipboard, the undo group, the
 /// preferences and menu checks, the selected gradient stop, mesh point and Appearance item, and the
@@ -545,6 +571,7 @@ struct Saved {
     envelope_defaults: Option<(vectorcraft_doc::live::EnvelopeOptions, f64)>,
 }
 
+#[cfg(feature = "plugins")]
 impl Saved {
     fn of(s: &Session) -> Saved {
         Saved {
@@ -596,7 +623,7 @@ impl Saved {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "plugins"))]
 mod tests {
     use super::*;
 

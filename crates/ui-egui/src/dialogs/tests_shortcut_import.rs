@@ -233,10 +233,12 @@ fn long_names_stay_within_what_plan_reads() {
     let _ = craft::keymap::plan(&set, dialog_keymap(&mut app), &options);
 }
 
+#[cfg(feature = "plugins")]
 /// A plug-in row picked as a target stores under its `plugin.dialog {id}` key and reads back under
 /// the filter's id; a removed plug-in is no target.
 #[test]
 fn an_imported_shortcut_reaches_a_filter_plugin_picked_as_its_target() {
+    #[cfg(feature = "plugins")]
     use vectorcraft_plugins::wat as tpl;
     let id = "test.UI.import_filter-one";
     let key = format!("plugin:{id}");

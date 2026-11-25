@@ -2,6 +2,7 @@ use super::run::{normalize_panel, toolbar_double, toolbar_panel};
 use super::slots::{perspective_grid, recent_slot, saved_selection_name, saved_selection_slot, saved_view, saved_view_slot};
 use super::{Brightness, Value, VectorcraftApp};
 use crate::i18n::LangExt as _;
+use crate::plugin_host as vectorcraft_plugins;
 use craft::keymap::Chord;
 use craft::ui::runtime::commands;
 

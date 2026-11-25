@@ -9,7 +9,7 @@ description = "VectorCraft engine: sessions, history, selection, the command reg
 workspace = true
 
 [features]
-default = ["bundled-fonts", "heif"]
+default = ["bundled-fonts", "heif", "plugins"]
 # The fonts vectorcraft-text bundles (see its `bundled-fonts`). Embedders that supply every font at
 # run time (`vectorcraft_text::FontDb::add_font`) build with `default-features = false`.
 bundled-fonts = ["vectorcraft-text/bundled-fonts"]
@@ -17,6 +17,10 @@ bundled-fonts = ["vectorcraft-text/bundled-fonts"]
 # feature still recognizes the files and refuses them with a message. The apps list it beside
 # `bundled-fonts`.
 heif = ["dep:heic-rs", "dep:rayon"]
+# WebAssembly plug-ins (vectorcraft-plugins, its wasmi host): the `plugin.*` commands, the Plug-ins
+# folder loaded at startup, exporter, importer and live-effect plug-ins. Without it every `plugin.*`
+# command is unknown and a plug-in effect a document names draws as when it isn't installed.
+plugins = ["dep:vectorcraft-plugins", "vectorcraft-render/plugins"]
 
 [dependencies]
 craft-codepage = { workspace = true }
@@ -40,7 +44,10 @@ vectorcraft-pdf = { workspace = true }
 vectorcraft-cad = { workspace = true }
 vectorcraft-eps = { workspace = true }
 vectorcraft-metafile = { workspace = true }
-vectorcraft-plugins = { workspace = true }
+vectorcraft-plugins = { workspace = true, optional = true }
+# The SHA-256 scripts record (`plugin_host::permissions::sha256_hex`) in a build without `plugins`;
+# the same crate and version vectorcraft-plugins uses.
+sha2 = { version = "0.10", default-features = false }
 vectorcraft-affinity = { workspace = true }
 craft-cdr = { workspace = true }
 vectorcraft-scriptcheck = { workspace = true }

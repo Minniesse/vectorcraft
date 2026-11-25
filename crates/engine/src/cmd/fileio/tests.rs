@@ -1567,6 +1567,7 @@ fn a_turned_cmyk_jpeg_keeps_its_icc_profile_from_every_segment() {
     assert!(kept.as_deref() == Some(icc.as_slice()), "the whole ICC profile: {:?} bytes", kept.map(|k| k.len()));
 }
 
+#[cfg(feature = "plugins")]
 /// With `importer` named, a file up to the importer's limit is read whole and a larger one is an
 /// error, whatever its content.
 #[test]

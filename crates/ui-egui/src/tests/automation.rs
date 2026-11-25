@@ -13,6 +13,7 @@ use craft::automation::actions::ActionList;
 use craft::automation::{ControlRequest, Reply};
 
 use super::picks::{answer_dialog, open_dialogs};
+#[cfg(feature = "plugins")]
 use crate::dialogs::plugin::InstallOrigin;
 use crate::{Services, VectorcraftApp};
 
@@ -1568,12 +1569,14 @@ fn ui_inspect_shows_full_library_ids_without_a_read_root() {
     assert!(hidden_panels(ui).contains(&format!("library:swatches:{theirs}")), "{r}");
 }
 
+#[cfg(feature = "plugins")]
 /// A plug-in's permissions are approved only by a person who asked for the install. A control
 /// request (or MCP, which comes through it) can't pass `grant`, can't answer the approval dialog or
 /// set what it installs, and the question it asked keeps OK disabled for the person too: they start
 /// Install Plug-in… themselves, which asks again, and its OK installs.
 #[test]
 fn automation_cannot_approve_a_plugin_install() {
+    #[cfg(feature = "plugins")]
     use super::plugins::{approve, at, ok_enabled, waiting, window};
     let (tx, rx) = std::sync::mpsc::channel();
     let mut app = VectorcraftApp::new(Session::new(), Default::default()).with_control(rx);
@@ -1712,6 +1715,7 @@ fn dialog_set_cannot_redirect_parameter_dialog() {
     assert_eq!(first_object(&app), (10.0, 30.0), "with its fixed x and the width set");
 }
 
+#[cfg(feature = "plugins")]
 /// A plug-in command's dialog runs that command of that plug-in: `ui.dialog.set` can't change the
 /// command or the plug-in it runs.
 #[test]
@@ -1799,9 +1803,11 @@ fn dialog_set_cannot_open_save_preset() {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// What the install question automation asked says instead of taking an OK.
 const ASKED: &str = "Automation asked to install this plug-in. To install it, choose Object › Plug-ins › Install Plug-in… yourself.";
 
+#[cfg(feature = "plugins")]
 /// The approval module `id` that lists `doc.read`, and its bytes as base64.
 fn approval_module(id: &str) -> (Vec<u8>, String) {
     let manifest = format!(r#"{{"id":"{id}","name":"Approval","version":"1","kind":"filter","permissions":["doc.read"]}}"#);
@@ -1810,16 +1816,19 @@ fn approval_module(id: &str) -> (Vec<u8>, String) {
     (bytes, data)
 }
 
+#[cfg(feature = "plugins")]
 /// Who asked the install question waiting for an answer.
 fn install_origin(app: &VectorcraftApp) -> Option<InstallOrigin> {
     app.pending_plugin_install.as_ref().map(|pending| pending.origin)
 }
 
+#[cfg(feature = "plugins")]
 /// An install question that a control request asked keeps OK disabled in the person's window, even
 /// once it was shown for the delay: a person's click, Enter or Space install nothing, and the dialog
 /// says to start Install Plug-in…. Cancel still closes it at once.
 #[test]
 fn a_person_cannot_approve_an_install_question_automation_asked() {
+    #[cfg(feature = "plugins")]
     use super::plugins::{at, click_ok, ok_enabled, waiting, window};
     use egui_kittest::kittest::Queryable;
     let id = "test.ui.approval.asked";
@@ -1851,6 +1860,7 @@ fn a_person_cannot_approve_an_install_question_automation_asked() {
     assert!(vectorcraft_plugins::registry::get(id).is_none() && vectorcraft_plugins::registry::granted(id).is_none());
 }
 
+#[cfg(feature = "plugins")]
 /// A question automation asks in place of the one a person asked can't be approved: it keeps
 /// automation's origin, though the person's question was shown and ready.
 #[test]
@@ -1873,12 +1883,14 @@ fn automation_replacing_a_persons_install_question_does_not_take_its_approval() 
     }
 }
 
+#[cfg(feature = "plugins")]
 /// A file a person picks in the file dialog that a control request opened (Install Plug-in… or
 /// File › Open with no path) is automation's request: its question can't be approved. The file
 /// dialog a person opens asks a question they can approve. A file a person drops is theirs; one the
 /// web page's script hands over is automation's.
 #[test]
 fn a_file_picked_in_a_dialog_automation_opened_stays_automations() {
+    #[cfg(feature = "plugins")]
     use super::plugins::waiting;
     let base = std::env::temp_dir().join(format!("vc-ui-approval-picked-{}", std::process::id()));
     std::fs::create_dir_all(&base).unwrap();
@@ -1922,6 +1934,7 @@ fn a_file_picked_in_a_dialog_automation_opened_stays_automations() {
     let _ = std::fs::remove_dir_all(base);
 }
 
+#[cfg(feature = "plugins")]
 /// A `.wasm` that a control request opens by path (`app.open`) asks a question that can't be
 /// approved; one the person opens can be.
 #[test]
@@ -1946,12 +1959,14 @@ fn a_plugin_automation_opened_by_path_asks_a_question_no_one_approves() {
     let _ = std::fs::remove_dir_all(base);
 }
 
+#[cfg(feature = "plugins")]
 /// A module that takes the place of another with its id, and asks for nothing else: automation's
 /// `replace: true` doesn't skip the question and its question can't be approved. The question a
 /// person asked keeps what it installs out of reach of `ui.dialog.set`, refuses a control confirm,
 /// and the person's own OK replaces.
 #[test]
 fn automation_cannot_approve_replacing_a_plugin() {
+    #[cfg(feature = "plugins")]
     use super::plugins::{approve, window};
     let (tx, rx) = std::sync::mpsc::channel();
     let mut app = VectorcraftApp::new(Session::new(), Default::default()).with_control(rx);
@@ -2002,6 +2017,7 @@ fn automation_cannot_approve_replacing_a_plugin() {
     h.state_mut().run("plugin.remove", json!({"id": free})).unwrap();
 }
 
+#[cfg(feature = "plugins")]
 /// [`request`] for an app the window draws: its passes take the injected input and answer the
 /// dialogs, and the reply comes once they have.
 fn request_drawn(h: &mut super::plugins::Window, tx: &std::sync::mpsc::Sender<ControlRequest>, method: &str, params: Value) -> Value {
@@ -2018,12 +2034,14 @@ fn request_drawn(h: &mut super::plugins::Window, tx: &std::sync::mpsc::Sender<Co
     reply.try_recv().unwrap()
 }
 
+#[cfg(feature = "plugins")]
 /// Keys and pointer input sent through the control path approve nothing at the install approval a
 /// person asked for: Enter and Space press nothing with no button focused, and with OK focused they
 /// and a `ui.click` on it press it and are refused. `ui.pointer` drives the canvas. A person's click
 /// on the same button approves.
 #[test]
 fn injected_keys_and_pointer_input_cannot_approve_a_plugin_install() {
+    #[cfg(feature = "plugins")]
     use super::plugins::{approve, at, waiting, window};
     use egui_kittest::kittest::{NodeT, Queryable};
     let refusal = "Only the person at the keyboard";

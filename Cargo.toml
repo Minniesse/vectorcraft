@@ -60,7 +60,9 @@ vectorcraft-trace = { path = "crates/trace" }
 # vectorcraft-testkit through the engine's `bundled-fonts`), so a library crate never forces them on
 # an embedder that supplies its fonts at run time.
 vectorcraft-text = { path = "crates/text", default-features = false }
-vectorcraft-effects = { path = "crates/effects" }
+# Without their default `plugins` (the WebAssembly plug-in host), as vectorcraft-engine: each app
+# that wants plug-ins asks for them, so an app built with `--no-default-features` leaves the host out.
+vectorcraft-effects = { path = "crates/effects", default-features = false }
 vectorcraft-three-d = { path = "crates/three-d" }
 vectorcraft-render = { path = "crates/render" }
 vectorcraft-svg = { path = "crates/svg" }
@@ -70,7 +72,7 @@ vectorcraft-tools = { path = "crates/tools" }
 # Without its default `bundled-fonts`, as vectorcraft-text: each crate that wants the fonts asks for
 # them, so an embedder can build without them (docs/development.md › Leaving out the bundled fonts).
 vectorcraft-engine = { path = "crates/engine", default-features = false }
-vectorcraft-ui-egui = { path = "crates/ui-egui" }
+vectorcraft-ui-egui = { path = "crates/ui-egui", default-features = false }
 vectorcraft-mcp = { path = "crates/mcp" }
 vectorcraft-testkit = { path = "crates/testkit" }
 vectorcraft-cad = { path = "crates/cad" }

@@ -8,6 +8,7 @@
 //! and the item's names, a counter, the date), and sorts the files into folders by row, by format,
 //! by item, or by item and format (`folders`).
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::collections::HashSet;
 use std::sync::Arc;
 

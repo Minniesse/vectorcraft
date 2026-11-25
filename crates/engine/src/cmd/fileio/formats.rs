@@ -3,6 +3,7 @@ use super::{
     Result, Session, TEMPLATE_FORMATS, UNSUPPORTED, Unsupported, Value, bad, dxf, eps, hpgl, json, metafile, native, pdf, screens, svg, text,
     unsupported,
 };
+use crate::plugin_host as vectorcraft_plugins;
 
 /// One option a format's encoder reads from the export params.
 #[derive(Clone, Copy, Debug)]
@@ -899,6 +900,13 @@ fn builtin(k: &str) -> Option<&'static Format> {
 /// only, with the plug-in's name as the label and its extensions. Each is made once for each
 /// installation of its plug-in, its strings interned, so formats live as long as the catalogues
 /// that hold them.
+#[cfg(not(feature = "plugins"))]
+pub fn plugin_formats() -> Vec<&'static Format> {
+    Vec::new()
+}
+
+/// The formats the installed exporter and importer plug-ins add (see the build without `plugins`).
+#[cfg(feature = "plugins")]
 pub fn plugin_formats() -> Vec<&'static Format> {
     use vectorcraft_plugins::{Kind, export, registry};
     static MADE: std::sync::Mutex<Vec<(u64, &'static Format)>> = std::sync::Mutex::new(Vec::new());

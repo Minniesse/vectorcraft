@@ -3,6 +3,7 @@ use super::{
     Appearance, AppearanceItem, BezPath, Effect, FillRule, Node, NodeKind, PathData, Rect, StrokeLayer, Value, WarpStyle, distort, stroke, stylize,
     util, warp,
 };
+use crate::plugin_host as vectorcraft_plugins;
 use vectorcraft_doc::Document;
 
 /// Context the geometry effects may need from the object's appearance.
