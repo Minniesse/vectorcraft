@@ -819,6 +819,7 @@ fn delete_and_cut_of_a_picked_object_remove_nothing() {
     assert!(s.doc().unwrap().doc.node(inst).is_none());
 }
 
+#[cfg(feature = "plugins")]
 #[test]
 fn commands_on_the_selection_leave_a_picked_objects_instance_alone() {
     // A dynamic instance with an opacity mask, a plain square and the Desaturate plug-in, with an

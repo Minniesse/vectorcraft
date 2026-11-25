@@ -4,3 +4,7 @@ vectorcraft-cli	native	-	vectorcraft-plugins	present
 vectorcraft-cli	native	-	wasmi	present
 vectorcraft-web	wasm32	-	vectorcraft-plugins	present
 vectorcraft-web	wasm32	-	wasmi	present
+# The gated crates themselves: each defaults to the host (an upstream build of the crate alone keeps it).
+vectorcraft-engine	native	-	vectorcraft-plugins	present
+vectorcraft-effects	native	-	vectorcraft-plugins	present
+vectorcraft-ui-egui	native	-	vectorcraft-plugins	present
