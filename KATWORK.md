@@ -22,7 +22,7 @@ Based on VectorCraft by the ArtCraft team (https://github.com/storytold/vectorcr
 
 The WebAssembly plug-in host (`vectorcraft-plugins`, the wasmi interpreter) is the Cargo feature `plugins`, on by default in
 `vectorcraft-engine` (the `plugin.*` commands, the Plug-ins folder loaded at startup, exporter and importer plug-ins),
-`vectorcraft-effects` (live-effect plug-ins), `vectorcraft-render` (forwarding), `vectorcraft-ui-egui` (the plug-in menus,
+`vectorcraft-effects` (live-effect plug-ins), `vectorcraft-ui-egui` (the plug-in menus,
 dialogs, install prompt and Help › Safe Mode), the CLI and the web app; the desktop app always turns it on. An upstream build
 is unchanged. KatWork builds the CLI and the web app with `--no-default-features` (no other feature): `vectorcraft-plugins`
 and `wasmi` are then in neither graph (`scripts/katwork-profile.sh`, CI job `katwork-profile`). Without it:

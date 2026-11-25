@@ -623,7 +623,8 @@ impl Saved {
     }
 }
 
-#[cfg(all(test, feature = "plugins"))]
+#[cfg(test)]
+#[cfg(feature = "plugins")]
 mod tests {
     use super::*;
 

@@ -8,10 +8,6 @@ description = "VectorCraft renderer: document to pixels (vello_cpu backend)"
 [lints]
 workspace = true
 
-[features]
-# Live-effect plug-ins in what is drawn (vectorcraft-effects' `plugins`); the engine turns it on with its own.
-plugins = ["vectorcraft-effects/plugins"]
-
 [dependencies]
 vectorcraft-geom = { workspace = true }
 vectorcraft-color = { workspace = true }

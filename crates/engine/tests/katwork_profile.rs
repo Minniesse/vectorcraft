@@ -4,6 +4,8 @@
 //! `cargo test -p vectorcraft-engine --no-default-features --features bundled-fonts,heif --test
 //! katwork_profile` runs every test here; the default build runs those not marked for the gate.
 
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
+
 use std::sync::Arc;
 
 use serde_json::json;

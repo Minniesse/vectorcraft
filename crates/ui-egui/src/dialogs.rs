@@ -210,11 +210,14 @@ mod tests_import_pdf;
 mod tests_messages;
 #[cfg(test)]
 mod tests_package;
-#[cfg(all(test, feature = "plugins"))]
+#[cfg(test)]
+#[cfg(feature = "plugins")]
 mod tests_plugin_export;
-#[cfg(all(test, feature = "plugins"))]
+#[cfg(test)]
+#[cfg(feature = "plugins")]
 mod tests_plugin_fields;
-#[cfg(all(test, feature = "plugins"))]
+#[cfg(test)]
+#[cfg(feature = "plugins")]
 mod tests_plugin_import;
 #[cfg(test)]
 mod tests_raster_formats;

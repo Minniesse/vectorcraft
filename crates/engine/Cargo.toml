@@ -20,7 +20,7 @@ heif = ["dep:heic-rs", "dep:rayon"]
 # WebAssembly plug-ins (vectorcraft-plugins, its wasmi host): the `plugin.*` commands, the Plug-ins
 # folder loaded at startup, exporter, importer and live-effect plug-ins. Without it every `plugin.*`
 # command is unknown and a plug-in effect a document names draws as when it isn't installed.
-plugins = ["dep:vectorcraft-plugins", "vectorcraft-render/plugins"]
+plugins = ["dep:vectorcraft-plugins", "vectorcraft-effects/plugins"]
 
 [dependencies]
 craft-codepage = { workspace = true }
@@ -33,6 +33,8 @@ vectorcraft-doc = { workspace = true }
 vectorcraft-tools = { workspace = true }
 vectorcraft-text = { workspace = true }
 vectorcraft-render = { workspace = true }
+# Named for its `plugins` (live-effect plug-ins in what is drawn); it is in the graph through render anyway.
+vectorcraft-effects = { workspace = true }
 vectorcraft-pathops = { workspace = true }
 # The panels and hinges of a packaging blank (Packaging Tools' Check Fold Lines).
 vectorcraft-three-d = { workspace = true }
