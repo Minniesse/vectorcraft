@@ -29,5 +29,5 @@ jobs:
         # Fail if it ran no test (zero tests pass green).
         run: |
           set -o pipefail
-          cargo test --locked -p vectorcraft-engine --no-default-features --features bundled-fonts,heif --test katwork_profile 2>&1 | tee katwork-profile-test.log
+          cargo test --locked -p vectorcraft-engine --no-default-features --features bundled-fonts --test katwork_profile 2>&1 | tee katwork-profile-test.log
           grep -E 'test result: ok\. [1-9][0-9]* passed' katwork-profile-test.log

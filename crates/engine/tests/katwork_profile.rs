@@ -1,8 +1,9 @@
 //! The KatWork build profile: built without the `plugins` feature (no WebAssembly plug-in host),
 //! every `plugin.*` command is unknown, and a document that names a plug-in live effect opens,
 //! draws and saves as an upstream build with that plug-in not installed does.
-//! `cargo test -p vectorcraft-engine --no-default-features --features bundled-fonts,heif --test
-//! katwork_profile` runs every test here; the default build runs those not marked for the gate.
+//! `cargo test -p vectorcraft-engine --no-default-features --features bundled-fonts --test katwork_profile`
+//! (the engine as the KatWork CLI builds it) runs every test here; the default build runs those not
+//! marked for a gate. Without `heif` (the apps' `heic` gate) HEIC and HEIF files are refused.
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
@@ -83,4 +84,16 @@ fn a_plugin_live_effect_draws_as_without_the_plugin_and_is_kept() {
     t.doc().unwrap().doc.walk(|n| kept |= n.appearance.effects.iter().any(|e| e.id == "plugin.org.example.not-installed"));
     assert!(kept, "the document keeps the plug-in effect");
     assert_eq!(drawn(&t), plain);
+}
+
+/// Without `heif` (the CLI's and web app's `heic` gate) a HEIC file is refused with a message: the
+/// HEVC decoder is not in the build.
+#[cfg(not(feature = "heif"))]
+#[test]
+fn heic_files_are_refused() {
+    // The 24-byte `ftyp` box of a HEIC file: major brand `heic`, compatible `mif1` and `heic`.
+    let ftyp = [&[0u8, 0, 0, 24][..], b"ftypheic", &[0, 0, 0, 0], b"mif1heic"].concat();
+    let data = vectorcraft_format::base64_encode(&ftyp);
+    let err = Session::new().execute("document.open", &json!({"name": "photo.heic", "dataBase64": data})).unwrap_err();
+    assert!(err.to_string().contains("HEIC and HEIF images can't be opened in this build"), "{err}");
 }

@@ -14,14 +14,17 @@ path = "src/main.rs"
 workspace = true
 
 [features]
-default = ["plugins"]
+default = ["plugins", "heic"]
 # WebAssembly plug-ins (the engine's `plugins`). The KatWork build turns it off.
 plugins = ["vectorcraft-engine/plugins"]
+# HEIC and HEIF images open and place (the engine's `heif`: heic-rs, an HEVC decoder). The KatWork
+# build turns it off; the files are then refused with a message.
+heic = ["vectorcraft-engine/heif"]
 
 [dependencies]
 vectorcraft-color = { workspace = true }
 vectorcraft-doc = { workspace = true }
-vectorcraft-engine = { workspace = true, features = ["bundled-fonts", "heif"] }
+vectorcraft-engine = { workspace = true, features = ["bundled-fonts"] }
 vectorcraft-format = { workspace = true }
 vectorcraft-geom = { workspace = true }
 vectorcraft-svg = { workspace = true }

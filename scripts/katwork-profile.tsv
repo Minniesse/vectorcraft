@@ -8,3 +8,6 @@ vectorcraft-web	wasm32	-	wasmi	present
 vectorcraft-engine	native	-	vectorcraft-plugins	present
 vectorcraft-effects	native	-	vectorcraft-plugins	present
 vectorcraft-ui-egui	native	-	vectorcraft-plugins	present
+# heic-rs (the HEVC decoder behind HEIC/HEIF import, gate `heic`).
+vectorcraft-cli	native	-	heic-rs	present
+vectorcraft-web	wasm32	-	heic-rs	present
