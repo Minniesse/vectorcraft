@@ -17,6 +17,9 @@ Based on VectorCraft by the ArtCraft team (https://github.com/storytold/vectorcr
 | `fix(katwork): the color wheel's opacity row builds again` (the fork base did not compile; the file as upstream has it at 99f7de526) | not needed: already fixed upstream; dropped when the fork syncs |
 | `chore(katwork): remove the ArtCraft marks` | not proposed upstream (the brand terms let a fork that proposes changes keep the marks; this one is a distributed modified version) |
 | `feat(katwork): plugins feature, on by default` | draft, not opened (in the fork PR body) |
+| `feat(katwork): heic feature, on by default` | draft, not opened (in the fork PR body) |
+| `feat(katwork): scripting feature, on by default` | draft, not opened (in the fork PR body) |
+| `feat(katwork): hide the items of left-out features` | draft, not opened (in the fork PR body) |
 
 ## The `plugins` feature
 
@@ -31,16 +34,45 @@ and `wasmi` are then in neither graph (`scripts/katwork-profile.sh`, CI job `kat
   `reload`, and any `plugin.<plug-in id>.<command>` id); no plug-in loads at startup and the Plug-ins folder is never read;
 - a document that names a plug-in live effect (`plugin.<id>`) opens and draws as when that plug-in isn't installed (the
   object keeps its geometry), and keeps the effect when saved;
-- File › Open With and exporter formats from plug-ins are absent; Install Plug-in… and Help › Safe Mode say plug-ins are not
-  available in this build;
+- File › Open With, Object › Plug-ins › Install Plug-in…, Help › Safe Mode…, the File › Open dialog's Plug-ins filter, the
+  `plugin.*` and other plug-in UI commands (in the command list and the command palette) and the Preferences rows Additional
+  Plug-ins Folder and Plug-in Instruction Budget are left out (`crates/ui-egui/src/left_out.rs`); Object › Plug-ins stays,
+  as it holds the built-in add-ons. The commands still run when named (Install Plug-in… and Safe Mode say plug-ins are not
+  available in this build);
 - the names the rest of the code takes from the plug-in crate come from inert stand-ins (`crates/engine/src/plugin_host.rs`,
   `crates/engine/src/cmd/plugin_off.rs`, `crates/engine/src/cmd/fileio/importer_off.rs`,
   `crates/ui-egui/src/dialogs/plugin_off.rs`, `crates/ui-egui/src/dialogs/safe_mode_off.rs`,
   `crates/effects/src/plugin_host.rs`); the text helpers scripts share with plug-ins (`sha256_hex`, `display_text`) are the
   same code, so scripts behave as before.
 
-The CLI and web app keep `vectorcraft-engine`'s `bundled-fonts` and `heif` as before (their manifests name them, not a
-default), so the KatWork build has HEIC/HEIF import as upstream's does.
+The CLI and web app keep `vectorcraft-engine`'s `bundled-fonts` as before (their manifests name it, not a default).
+
+## The `heic` feature
+
+HEIC and HEIF import needs `heic-rs` (an HEVC decoder), the engine's `heif` feature. The CLI and web app turn it on through
+their own `heic` feature, on by default; the desktop app names `heif` itself. KatWork builds the CLI and the web app without
+it: `heic-rs` is in neither graph (rows in `scripts/katwork-profile.tsv`), and a HEIC or HEIF file is refused with "HEIC and
+HEIF images can't be opened in this build" (test `heic_files_are_refused` in `crates/engine/tests/katwork_profile.rs`).
+
+## The `scripting` feature
+
+Scripts run on `vectorcraft-js`, the app's ECMAScript interpreter: the Cargo feature `scripting`, on by default in
+`vectorcraft-engine` (the `script.*` commands), `vectorcraft-ui-egui` (File › Scripts, Check Script…, Other Script…, the
+Script Console, the script dialogs and the status bar's Stop), the CLI and the web app; the desktop app always turns it on.
+KatWork builds the CLI and the web app without it: `vectorcraft-js` is in neither graph, and also not in the engine's or the
+interface's own graph with their defaults off (rows in `scripts/katwork-profile.tsv`; the engine keeps it as a
+dev-dependency for its tests). Without it:
+
+- every `script.*` command is unknown (test `script_commands_are_unknown`), and File › Open lists no Scripts filter and
+  does not check `.js` or `.jsx` files;
+- File › Scripts, Window › Script Console and the script UI commands are not in the menus, the command list or the command
+  palette, and Preferences has no Show External Script Warning row (`crates/ui-egui/src/left_out.rs`, tests in
+  `crates/ui-egui/src/tests/katwork_hidden.rs` and `crates/ui-egui/src/prefs_dialog/tests.rs`);
+- the names the rest of the code takes from the script modules come from inert stand-ins
+  (`crates/engine/src/script_off.rs`, `crates/engine/src/cmd/scripts_off.rs`, `crates/ui-egui/src/scripts_menu_off.rs`);
+  the engine helpers only scripts call (script gates and scopes, history marks, a few recovery and link helpers) carry
+  `#[cfg(feature = "scripting")]` where they are, so the upstream files keep their shape;
+- the tests of script runs are built only with the feature.
 
 ## The marks
 
