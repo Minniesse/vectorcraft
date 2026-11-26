@@ -1258,6 +1258,7 @@ mod tests {
         assert_eq!(base_color(&app), shown, "the base keeps the color it showed");
     }
 
+    #[cfg(feature = "scripting")]
     /// A script run ends the link: a script that deletes the spot color and makes another of the
     /// same name does not make the new one the base, and the base keeps the color it showed. Listing
     /// scripts or plug-ins keeps it.

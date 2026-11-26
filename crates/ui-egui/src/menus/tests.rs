@@ -269,6 +269,7 @@ fn discover_command_results_follow_their_menu_label() {
     assert_eq!(back["results"][index]["label"], "Hide Grid");
 }
 
+#[cfg(feature = "scripting")]
 /// A menu entry's shown path translates the menus' own names and keeps a Scripts folder's name, as
 /// the menus draw it; Help shows that path.
 #[test]

@@ -1465,7 +1465,11 @@ mod tests {
             ("ui.action.playAt", "Play Action (ui.action.playAt)"),
             ("ui.batchDialog", "Batch…"),
             ("ui.flattenerPreview", "Flattener Preview"),
-        ] {
+        ]
+        .into_iter()
+        // A build without plug-ins leaves Continue in Background of plug-in runs out (`left_out`).
+        .filter(|(id, _)| !crate::left_out::hidden(id, &serde_json::Value::Null))
+        {
             assert_eq!(shown(id), want, "{id}");
         }
         assert!(shown("perspective.grid.rulers").contains("Perspective Grid"), "{}", shown("perspective.grid.rulers"));
@@ -1491,7 +1495,8 @@ mod tests {
     #[test]
     fn the_paths_of_results_that_share_a_name_translate() {
         let ids: Vec<String> = items().into_iter().map(|(_, id)| id).collect();
-        for (id, _) in CONTEXTS {
+        // A command the build leaves out (`left_out`) is no result.
+        for (id, _) in CONTEXTS.iter().filter(|(id, _)| !crate::left_out::hidden(id, &serde_json::Value::Null)) {
             assert!(ids.iter().any(|i| i == id), "{id} is a result");
         }
         let mut paths: Vec<String> = CONTEXTS.iter().map(|(_, path)| path.to_string()).collect();
@@ -1663,8 +1668,10 @@ mod tests {
         for id in PICK_RUNS.iter().filter(|id| !session_only.contains(id)) {
             assert!(acts(id), "a pick of {id} does something");
         }
-        // Without the `plugins` feature the `plugin.*` commands are not registered, so not listed.
-        let registered = |id: &&&str| cfg!(feature = "plugins") || !id.starts_with("plugin.");
+        // Without the `plugins` feature the `plugin.*` commands are not registered, so not listed;
+        // without `scripting` the `script.*` commands.
+        let registered =
+            |id: &&&str| (cfg!(feature = "plugins") || !id.starts_with("plugin.")) && (cfg!(feature = "scripting") || !id.starts_with("script."));
         for id in PICK_RUNS.iter().chain(&["object.group", "select.key", "view.preciseCursors", "path.close"]).filter(registered) {
             assert!(listed.contains(*id), "{id} stays");
         }

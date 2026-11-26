@@ -460,7 +460,8 @@ fn open_exts_cover_every_readable_format() {
     assert_eq!(filters[0], ("All readable files", OPEN_EXTS));
     assert_eq!(
         filters.len(),
-        13 + FORMATS.iter().filter(|f| f.read).count(),
+        // The Scripts and Plug-ins filters only with their features.
+        11 + usize::from(cfg!(feature = "scripting")) + usize::from(cfg!(feature = "plugins")) + FORMATS.iter().filter(|f| f.read).count(),
         "and swatch and graphic style libraries, libraries, flattener, PDF, print, perspective grid and export presets, composite \
          fonts, shortcut sets, scripts, plug-ins"
     );

@@ -79,6 +79,7 @@ mod ui_commands;
 
 pub use context::context_items;
 #[cfg(test)]
+#[cfg(feature = "scripting")]
 use entries::flatten;
 pub use entries::{InsertableItem, MenuEntry, context_entries, insertable, insertable_items, menu_entries, plays_in_app, shown_label};
 pub(crate) use invoke::graph_dialog;

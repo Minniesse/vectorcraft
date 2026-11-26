@@ -7,9 +7,12 @@ use vectorcraft_engine::Session;
 
 use crate::{VectorcraftApp, menus};
 
+/// A menu item: its path, label, command id and params.
+type Entry = (Vec<String>, String, String, Value);
+
 /// Every command id the menus, the UI command list and the palette offer, with the menu path and
 /// label of each menu item.
-fn offered() -> (Vec<(Vec<String>, String, String, Value)>, Vec<&'static str>, Vec<String>) {
+fn offered() -> (Vec<Entry>, Vec<&'static str>, Vec<String>) {
     let app = VectorcraftApp::new(Session::new(), crate::Services::default());
     let entries = menus::menu_entries(&app).into_iter().map(|e| (e.path, e.label, e.command.unwrap_or_default(), e.params)).collect();
     let ui = menus::UI_COMMANDS.iter().map(|c| c.0).collect();

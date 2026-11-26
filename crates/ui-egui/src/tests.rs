@@ -12,6 +12,7 @@ mod font_menu;
 mod fonts;
 mod guide_escape;
 mod home;
+#[cfg(any(not(feature = "plugins"), not(feature = "scripting")))]
 mod katwork_hidden;
 pub(super) mod labels;
 mod lifecycle;

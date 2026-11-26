@@ -232,6 +232,7 @@ mod tests {
         assert_eq!(s.active().unwrap().revision, revision);
     }
 
+    #[cfg(feature = "scripting")]
     #[test]
     fn a_script_raises_a_message_with_vc_run() {
         let mut s = Session::new();
@@ -245,6 +246,7 @@ mod tests {
         assert_eq!(s.take_toasts(), vec![Toast::new("Done: 2", Level::Success)]);
     }
 
+    #[cfg(feature = "scripting")]
     #[test]
     fn a_failed_script_run_puts_the_documents_back_and_keeps_its_messages() {
         let mut s = Session::new();
