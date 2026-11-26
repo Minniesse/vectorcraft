@@ -475,8 +475,16 @@ fn open_exts_cover_every_readable_format() {
         assert!(!filters[0].1.contains(e), "All readable files lists documents only, not .{e}");
     }
     assert!(filters.contains(&("Export presets", SCREEN_EXPORT_PRESET_EXTS)), "File › Open imports export presets");
-    assert!(filters.contains(&("Scripts", crate::cmd::scripts::EXTS)), "File › Open checks scripts");
-    assert_eq!(filters.last(), Some(&("Plug-ins", crate::cmd::plugin::EXTS)), "File › Open installs plug-ins");
+    if cfg!(feature = "scripting") {
+        assert!(filters.contains(&("Scripts", crate::cmd::scripts::EXTS)), "File › Open checks scripts");
+    } else {
+        assert!(filters.iter().all(|f| f.0 != "Scripts"), "a build without scripts lists no Scripts filter");
+    }
+    if cfg!(feature = "plugins") {
+        assert_eq!(filters.last(), Some(&("Plug-ins", crate::cmd::plugin::EXTS)), "File › Open installs plug-ins");
+    } else {
+        assert!(filters.iter().all(|f| f.0 != "Plug-ins"), "a build without plug-ins lists no Plug-ins filter");
+    }
 }
 
 #[test]

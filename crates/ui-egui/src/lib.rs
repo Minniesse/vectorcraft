@@ -69,6 +69,7 @@ pub mod placing;
 pub mod plugin_runs;
 #[cfg(feature = "plugins")]
 pub(crate) use vectorcraft_plugins as plugin_host;
+mod left_out;
 #[cfg(not(feature = "plugins"))]
 mod plugin_host;
 pub mod prefs_dialog;

@@ -1,21 +1,15 @@
 //! The plug-in dialogs and menus in a build without the `plugins` feature: no plug-in is installed
-//! and every `plugin.*` command is unknown, so the plug-in menus hold their "none installed" rows
-//! and Install Plug-in… alone, no plug-in dialog opens, and an install never waits for an answer.
+//! and every `plugin.*` command is unknown, so the menus hold no plug-in row (Install Plug-in…,
+//! File › Open With and Safe Mode… are left out, [`crate::left_out`]), no plug-in dialog opens,
+//! and an install never waits for an answer.
 
 use serde_json::Value;
 
 use crate::VectorcraftApp;
-use crate::menus::{Sep, c, placeholder};
 use crate::plugin_host::Plugin;
 
 /// The key of the hosted dialog of plug-in filters.
 pub const KIND: &str = "plugin";
-
-/// Object › Plug-ins' disabled row while no filter plug-in is installed.
-pub const NO_FILTERS: &str = "No filter plug-ins installed";
-
-/// File › Open With's disabled row while no importer plug-in is installed.
-pub const NO_IMPORTERS: &str = "No importer plug-ins installed";
 
 /// The key of an exporter's parameters dialog.
 pub const EXPORT_KIND: &str = "pluginExport";
@@ -29,15 +23,14 @@ pub const INSTALL_KIND: &str = "pluginInstall";
 /// No plug-in command is placed in a menu: none is installed.
 pub fn place_commands(_: &mut [(&'static str, Vec<craft::menu::Node>)]) {}
 
-/// Object › Plug-ins: no filter is installed; Install Plug-in… stays and says that plug-ins are
-/// not available when chosen (`plugin.reload` is not a command in this build, so no Reload).
+/// Object › Plug-ins: only the built-in add-ons, no plug-in row ([`crate::left_out`]).
 pub fn object_menu() -> Vec<craft::menu::Node> {
-    vec![placeholder(NO_FILTERS), Sep, c("Install Plug-in…", "ui.installPlugin")]
+    Vec::new()
 }
 
-/// File › Open With: no importer is installed.
+/// File › Open With: left out of this build ([`crate::left_out`]).
 pub fn open_with_menu() -> Vec<craft::menu::Node> {
-    vec![placeholder(NO_IMPORTERS)]
+    Vec::new()
 }
 
 /// Effect › Plug-ins: none (no live-effect plug-in is installed).

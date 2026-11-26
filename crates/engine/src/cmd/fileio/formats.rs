@@ -834,7 +834,7 @@ pub fn builtin_open_filters() -> impl Iterator<Item = (&'static str, &'static [&
 
 /// The open-dialog filters after the document formats: swatch and graphic style libraries,
 /// Libraries panel libraries, presets (perspective grid presets among them), composite fonts,
-/// shortcut sets, scripts and plug-ins.
+/// shortcut sets, scripts and plug-ins. A build without scripts or plug-ins lists no filter for them.
 fn other_open_filters() -> impl Iterator<Item = (&'static str, &'static [&'static str])> {
     std::iter::once(("Swatch libraries", crate::cmd::swatchlib::LIBRARY_EXTS))
         .chain(std::iter::once(("Graphic Style Libraries", std::slice::from_ref(&vectorcraft_doc::style_libs::STYLES_EXT))))
@@ -848,6 +848,7 @@ fn other_open_filters() -> impl Iterator<Item = (&'static str, &'static [&'stati
         .chain(std::iter::once(("Shortcut sets", crate::cmd::shortcutset::EXTS)))
         .chain(std::iter::once(("Scripts", crate::cmd::scripts::EXTS)))
         .chain(std::iter::once(("Plug-ins", crate::cmd::plugin::EXTS)))
+        .filter(|(_, exts)| !exts.is_empty())
 }
 
 /// Open-dialog filters for Swatch Libraries and Graphic Style Libraries Other Library… and Locate

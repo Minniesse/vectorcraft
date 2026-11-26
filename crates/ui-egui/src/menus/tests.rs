@@ -1260,7 +1260,8 @@ fn every_bound_menu_command_exists() {
 
 /// File › Open With and Object › Plug-ins stay in the laid-out bar with nothing of their kind installed, showing a
 /// disabled row that says so. Plug-ins are process-wide and other tests install some, so each list is checked only
-/// while it holds none of its own rows.
+/// while it holds none of its own rows. A build without `plugins` has neither list.
+#[cfg(feature = "plugins")]
 #[test]
 fn plugin_lists_show_a_disabled_row_when_nothing_is_installed() {
     fn submenu<'a>(nodes: &'a [Node], english: &str) -> Option<&'a [Node]> {

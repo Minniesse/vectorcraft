@@ -47,6 +47,9 @@ impl Listed {
 pub fn menu_tree_named(english_names: bool, listed: &Listed) -> Vec<(&'static str, Vec<Node>)> {
     let mut tree = built_in_tree(english_names, listed);
     crate::dialogs::plugin::place_commands(&mut tree);
+    for (_, items) in &mut tree {
+        crate::left_out::prune(items);
+    }
     tree
 }
 

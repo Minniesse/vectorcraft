@@ -49,7 +49,9 @@ pub(crate) fn todo(label: &'static str) -> Node {
     named(label, TODO, json!({ "label": label }))
 }
 /// A disabled row that stands for an empty list, so its submenu stays in the menu: the layout
-/// drops a heading with no item after it, and with it a submenu left empty.
+/// drops a heading with no item after it, and with it a submenu left empty. Only the plug-in lists
+/// have one.
+#[cfg(feature = "plugins")]
 pub(crate) fn placeholder(label: &'static str) -> Node {
     named(label, PLACEHOLDER, json!({ "label": label }))
 }
