@@ -987,6 +987,7 @@ fn run_ui_part9(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Result<
         }
         "ui.flattenerPreview" => crate::panels::flattener_preview::command(app, p),
         "ui.foldPreview" => crate::addons::packaging::preview::command(app, p),
+        #[cfg(feature = "scripting")]
         "ui.copyScriptConsole" => crate::panels::script_console::copy(app, p),
         "window.graphicStyleLibrary" => crate::panels::graphic_styles::open_library(app, p),
         "ui.libraryPanel" => crate::panels::library_panel::command(app, p),
@@ -1214,8 +1215,11 @@ fn run_ui_part13(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Result
         "plugin.hideRuns" => Ok(crate::plugin_runs::hide_all(app)),
         "imageTrace.cancelRuns" => Ok(crate::trace_runs::cancel_all(app)),
         "imageTrace.hideRuns" => Ok(crate::trace_runs::hide_all(app)),
+        #[cfg(feature = "scripting")]
         "ui.checkScript" => crate::dialogs::script_check::command(app, p),
+        #[cfg(feature = "scripting")]
         "ui.runScript" => crate::dialogs::script_run::command(app, p),
+        #[cfg(feature = "scripting")]
         crate::scripts_menu::COMMAND => crate::scripts_menu::run(app, p),
         "ui.perspectiveGridDialog" => crate::dialogs::perspective_grid::open(app),
         "ui.perspectivePresetsDialog" => {

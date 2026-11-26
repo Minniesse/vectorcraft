@@ -236,8 +236,10 @@ fn a_recorded_command_whose_noted_values_do_not_fit_is_left_out() {
 }
 
 /// A script that moves the selection twice.
+#[cfg(feature = "scripting")]
 const TWO_MOVES: &str = "vc.run('object.move', {dx: 1, dy: 0}); vc.run('object.move', {dx: 1, dy: 0});";
 
+#[cfg(feature = "scripting")]
 /// Runs `source` to its end: in one call (`frames` false, a run with nobody to ask), or a frame
 /// at a time, as the app does.
 fn run_script(app: &mut VectorcraftApp, source: &str, frames: bool) {
@@ -260,6 +262,7 @@ fn recording_with(app: &mut VectorcraftApp, filler: usize) {
     }
 }
 
+#[cfg(feature = "scripting")]
 /// A script whose commands take a recording past 10,000 steps keeps its edit and the whole
 /// journal, the status bar names the limit as the run ends, the next recorded command does not
 /// run, and Stop Playing/Recording keeps the 10,000 steps that fit. One that fills the action
@@ -295,6 +298,7 @@ fn script_run_checks_recording_step_limit_on_completion() {
     }
 }
 
+#[cfg(feature = "scripting")]
 /// A script whose commands give the recording's set a file larger than 8 MiB keeps its edit,
 /// the status bar names the limit as the run ends, and Stop Playing/Recording keeps the steps
 /// that fit in a set that Load Actions… reads. One that fills the file exactly names no limit.

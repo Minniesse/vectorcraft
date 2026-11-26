@@ -172,14 +172,23 @@ mod repeat_edit;
 mod save;
 mod saveoptions;
 mod scalestrokes;
+#[cfg(feature = "scripting")]
 mod script_console;
+#[cfg(feature = "scripting")]
 mod script_dialogs;
+#[cfg(feature = "scripting")]
 mod script_dollar;
+#[cfg(feature = "scripting")]
 mod script_engines;
+#[cfg(feature = "scripting")]
 mod script_folder;
+#[cfg(feature = "scripting")]
 mod script_include;
+#[cfg(feature = "scripting")]
 mod script_io;
+#[cfg(feature = "scripting")]
 mod script_run;
+#[cfg(feature = "scripting")]
 mod scripts;
 mod select_effects;
 mod select_ids_first;

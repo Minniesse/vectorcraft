@@ -3,7 +3,8 @@
 //! draws and saves as an upstream build with that plug-in not installed does.
 //! `cargo test -p vectorcraft-engine --no-default-features --features bundled-fonts --test katwork_profile`
 //! (the engine as the KatWork CLI builds it) runs every test here; the default build runs those not
-//! marked for a gate. Without `heif` (the apps' `heic` gate) HEIC and HEIF files are refused.
+//! marked for a gate. Without `heif` (the apps' `heic` gate) HEIC and HEIF files are refused, and
+//! without `scripting` every `script.*` command is unknown.
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
@@ -96,4 +97,29 @@ fn heic_files_are_refused() {
     let data = vectorcraft_format::base64_encode(&ftyp);
     let err = Session::new().execute("document.open", &json!({"name": "photo.heic", "dataBase64": data})).unwrap_err();
     assert!(err.to_string().contains("HEIC and HEIF images can't be opened in this build"), "{err}");
+}
+
+/// Without `scripting` (the KatWork CLI and web builds) every `script.*` command is unknown: no
+/// script runs, is checked or is listed.
+#[cfg(not(feature = "scripting"))]
+#[test]
+fn script_commands_are_unknown() {
+    let mut s = Session::new();
+    let calls = [
+        ("script.run", json!({"source": "1 + 1"})),
+        ("script.run", json!({"path": "/tmp/x.jsx"})),
+        ("script.check", json!({"source": "1 + 1"})),
+        ("script.listInstalled", json!({})),
+        ("script.console", json!({})),
+        ("script.stop", json!({})),
+        ("script.engines", json!({})),
+        ("script.grants", json!({})),
+    ];
+    for (cmd, p) in calls {
+        match s.execute(cmd, &p) {
+            Err(vectorcraft_engine::EngineError::UnknownCommand(named)) => assert_eq!(named, cmd),
+            other => panic!("{cmd}: expected the unknown-command error, got {other:?}"),
+        }
+    }
+    assert!(vectorcraft_engine::cmd::command_specs().iter().all(|c| !c.id.starts_with("script.")), "no script.* command is registered");
 }

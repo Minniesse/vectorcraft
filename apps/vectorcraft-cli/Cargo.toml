@@ -14,12 +14,15 @@ path = "src/main.rs"
 workspace = true
 
 [features]
-default = ["plugins", "heic"]
+default = ["plugins", "heic", "scripting"]
 # WebAssembly plug-ins (the engine's `plugins`). The KatWork build turns it off.
 plugins = ["vectorcraft-engine/plugins"]
 # HEIC and HEIF images open and place (the engine's `heif`: heic-rs, an HEVC decoder). The KatWork
 # build turns it off; the files are then refused with a message.
 heic = ["vectorcraft-engine/heif"]
+# Scripts (vectorcraft-js, the app's ECMAScript interpreter) and their commands. The KatWork build
+# turns it off; every `script.*` command is then unknown.
+scripting = ["vectorcraft-engine/scripting"]
 
 [dependencies]
 vectorcraft-color = { workspace = true }

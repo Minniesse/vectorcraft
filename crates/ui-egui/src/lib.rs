@@ -76,7 +76,12 @@ pub mod print;
 pub mod recovery;
 pub mod render_worker;
 pub mod screen_color;
+#[cfg(feature = "scripting")]
 pub mod script_runs;
+#[cfg(feature = "scripting")]
+pub mod scripts_menu;
+#[cfg(not(feature = "scripting"))]
+#[path = "scripts_menu_off.rs"]
 pub mod scripts_menu;
 mod settings;
 pub mod shortcut_editor;

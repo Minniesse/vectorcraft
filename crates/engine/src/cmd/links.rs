@@ -406,6 +406,7 @@ fn locate(link: &LinkInfo, base: LinkBase) -> Option<Found> {
     Some(f)
 }
 
+#[cfg(feature = "scripting")]
 /// The files the links of `d` (a document looking from `base`) lead to now: where [`locate`]
 /// finds each linked image's and placed document's file from `base` and from no document (as
 /// output reads them, [`full_linked_images`]), the plate files of their own of images placed from

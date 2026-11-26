@@ -38,6 +38,7 @@ fn open_bytes_with(app: &mut VectorcraftApp, name: &str, bytes: &[u8], path: Opt
     if opens == Some(OpensAs::ShortcutSet) {
         return dialogs::shortcut_import::open(app, name, bytes).map(|_| Value::Null);
     }
+    #[cfg(feature = "scripting")]
     if opens == Some(OpensAs::Script) {
         let p = match path {
             Some(path) => json!({ "path": path }),
@@ -621,6 +622,7 @@ fn open_file_with(app: &mut VectorcraftApp, path: &str, background: bool, p: &Va
         return Ok(Value::Null);
     }
     // A script is read by `script.check`, up to its limit.
+    #[cfg(feature = "scripting")]
     if opens_as(path) == Some(OpensAs::Script) {
         dialogs::script_check::command(app, &json!({ "path": path }))?;
         note_recent(app, path);

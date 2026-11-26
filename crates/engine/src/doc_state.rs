@@ -192,6 +192,7 @@ pub(crate) fn objects_only(sel: &Selection) -> bool {
 pub(crate) enum ByScript {
     /// A command a script ran opened it (or made it).
     Opened,
+    #[cfg(feature = "scripting")]
     /// A command a script ran changed it or gave it another file: the document, its file and the
     /// file it was read from as they were before the first such command.
     Changed { doc: Arc<Document>, path: Option<String>, links_from: Option<String> },
@@ -482,6 +483,7 @@ impl DocState {
         });
     }
 
+    #[cfg(feature = "scripting")]
     /// The document, its file and the file it was read from as the person last left them, for the
     /// commands scripts run ([`DocState::by_script`]): `None` for a document a script's command
     /// opened.
@@ -493,6 +495,7 @@ impl DocState {
         }
     }
 
+    #[cfg(feature = "scripting")]
     /// Notes what a command a script ran did to the document, which was `was` (the document, its
     /// file and the file it was read from) before the command ran, or not open when `was` is
     /// `None`. The first change is kept until the person saves the document.

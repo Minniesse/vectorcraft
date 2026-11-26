@@ -11,3 +11,8 @@ vectorcraft-ui-egui	native	-	vectorcraft-plugins	present
 # heic-rs (the HEVC decoder behind HEIC/HEIF import, gate `heic`).
 vectorcraft-cli	native	-	heic-rs	present
 vectorcraft-web	wasm32	-	heic-rs	present
+# vectorcraft-js (the ECMAScript interpreter that runs scripts, gate `scripting`).
+vectorcraft-cli	native	-	vectorcraft-js	present
+vectorcraft-web	wasm32	-	vectorcraft-js	present
+vectorcraft-engine	native	-	vectorcraft-js	present
+vectorcraft-ui-egui	native	-	vectorcraft-js	present

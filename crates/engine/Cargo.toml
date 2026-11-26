@@ -9,7 +9,7 @@ description = "VectorCraft engine: sessions, history, selection, the command reg
 workspace = true
 
 [features]
-default = ["bundled-fonts", "heif", "plugins"]
+default = ["bundled-fonts", "heif", "plugins", "scripting"]
 # The fonts vectorcraft-text bundles (see its `bundled-fonts`). Embedders that supply every font at
 # run time (`vectorcraft_text::FontDb::add_font`) build with `default-features = false`.
 bundled-fonts = ["vectorcraft-text/bundled-fonts"]
@@ -21,6 +21,9 @@ heif = ["dep:heic-rs", "dep:rayon"]
 # folder loaded at startup, exporter, importer and live-effect plug-ins. Without it every `plugin.*`
 # command is unknown and a plug-in effect a document names draws as when it isn't installed.
 plugins = ["dep:vectorcraft-plugins", "vectorcraft-effects/plugins"]
+# Scripts (vectorcraft-js, the app's ECMAScript interpreter): the `script.*` commands, File › Scripts and
+# the Script Console. Without it every `script.*` command is unknown and no script runs.
+scripting = ["dep:vectorcraft-js"]
 
 [dependencies]
 craft-codepage = { workspace = true }
@@ -53,7 +56,7 @@ sha2 = { version = "0.10", default-features = false }
 vectorcraft-affinity = { workspace = true }
 craft-cdr = { workspace = true }
 vectorcraft-scriptcheck = { workspace = true }
-vectorcraft-js = { workspace = true }
+vectorcraft-js = { workspace = true, optional = true }
 # The commands' parameter schemas (schemas.rs).
 vectorcraft-apischema = { workspace = true }
 image = { workspace = true }

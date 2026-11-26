@@ -824,6 +824,7 @@ fn ui_inspect_checks_a_folder_preference_as_trimmed() {
     let _ = std::fs::remove_dir_all(base);
 }
 
+#[cfg(feature = "scripting")]
 /// `ui.inspect` hides a hidden library's id and path in every string it holds: status text, the
 /// command palette query and a script's report show the id and file name shown, and the path appears
 /// nowhere in the reply.
@@ -1376,6 +1377,7 @@ fn ui_inspect_and_ui_docking_give_a_hidden_library_the_same_id() {
     let _ = std::fs::remove_dir_all(base);
 }
 
+#[cfg(feature = "scripting")]
 /// `ui.inspect` rewrites only the ids of libraries the UI state refers to: a script's report line and
 /// a command palette query that look like a library id, with no such library, stay as written, and
 /// the query does not take the file name of a real library outside the root.
@@ -1402,6 +1404,7 @@ fn ui_inspect_keeps_text_that_only_looks_like_a_library_id() {
     let _ = std::fs::remove_dir_all(base);
 }
 
+#[cfg(feature = "scripting")]
 /// `ui.inspect`'s `scriptReport` names a file the person's script wrote outside the read root (in
 /// the folder the person allowed it), and the included file a failed run stopped in (also in its
 /// error line), by its file name; the person sees the paths.
@@ -1453,6 +1456,7 @@ fn ui_inspect_script_report_leaves_out_files_outside_the_read_root() {
     let _ = std::fs::remove_dir_all(base);
 }
 
+#[cfg(feature = "scripting")]
 /// `ui.inspect` rewrites a hidden library's id only where a string is that whole id: a readable
 /// library's id that begins with it stays, and a script's report line and a command palette query
 /// that end with it show the id shown.

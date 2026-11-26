@@ -1603,6 +1603,11 @@ mod tests {
         // What a pick can change: the document with its selection, history, revision and layer
         // state, the Script Console, and the interface's state (an open dialog or panel, the
         // selected tool), the status line aside.
+        #[cfg(feature = "scripting")]
+        let console_lines = |app: &VectorcraftApp| app.session.script_console().lines().len();
+        // Without `scripting` there is no Script Console.
+        #[cfg(not(feature = "scripting"))]
+        let console_lines = |_: &VectorcraftApp| 0;
         let look = |app: &VectorcraftApp| {
             let mut ui = serde_json::to_value(&app.ui).unwrap_or_default();
             // The pick's count is the palette's record of the pick ([`record_pick`]), not the command's doing.
@@ -1614,7 +1619,7 @@ mod tests {
                 (st.doc.clone(), format!("{:?}", st.selection), st.history.undo.len(), st.revision, st.active_layer, st.layer_rows.clone())
             });
             // A modeless dialog (Find and Replace) blocks nothing, so `any_dialog_open` leaves it out: the host lists it.
-            (doc, app.session.script_console().lines().len(), (app.any_dialog_open(), crate::tests::picks::open_dialogs(app).len()), ui)
+            (doc, console_lines(app), (app.any_dialog_open(), crate::tests::picks::open_dialogs(app).len()), ui)
         };
         let acts = |id: &str| {
             [Session::new(), Fixture::Single.session(), Fixture::Multi.session()].into_iter().any(|session| {
@@ -1677,17 +1682,21 @@ mod tests {
             assert!(ids.iter().any(|i| i == id), "{id} is a result");
             pick(app, id);
         };
-        app.session.script_frames = true;
-        app.run("script.run", json!({"source": "$.writeln('line')", "name": "c.js"})).unwrap();
-        for _ in 0..10_000 {
-            if !app.session.script_running() {
-                break;
+        // Without `scripting` there is no script command to pick.
+        #[cfg(feature = "scripting")]
+        {
+            app.session.script_frames = true;
+            app.run("script.run", json!({"source": "$.writeln('line')", "name": "c.js"})).unwrap();
+            for _ in 0..10_000 {
+                if !app.session.script_running() {
+                    break;
+                }
+                crate::script_runs::poll(&mut app);
             }
-            crate::script_runs::poll(&mut app);
+            assert!(!app.session.script_running() && !app.session.script_console().lines().is_empty());
+            pick_listed(&mut app, "script.console.clear");
+            assert!(app.session.script_console().lines().is_empty(), "{}", app.ui.status);
         }
-        assert!(!app.session.script_running() && !app.session.script_console().lines().is_empty());
-        pick_listed(&mut app, "script.console.clear");
-        assert!(app.session.script_console().lines().is_empty(), "{}", app.ui.status);
 
         let default = app.session.prefs.use_precise_cursors;
         app.session.prefs.use_precise_cursors = !default;

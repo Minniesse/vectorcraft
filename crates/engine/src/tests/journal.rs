@@ -1364,12 +1364,16 @@ fn take_shape_drawn_follows_the_shapes_that_were_drawn() {
     )
     .unwrap();
     assert!(!s.take_shape_drawn(), "saved steps");
-    // A script's commands.
-    let count = |s: &Session| s.doc().unwrap().doc.layers[0].children().map_or(0, |c| c.len());
-    let shapes = count(&s);
-    s.execute("script.run", &json!({"source": "vc.run('shape.rectangle', {x:100,y:0,width:5,height:5});", "name": "t.js"})).unwrap();
-    assert_eq!(count(&s), shapes + 1, "the script drew");
-    assert!(!s.take_shape_drawn(), "a script");
+    // Without `scripting` no script runs.
+    #[cfg(feature = "scripting")]
+    {
+        // A script's commands.
+        let count = |s: &Session| s.doc().unwrap().doc.layers[0].children().map_or(0, |c| c.len());
+        let shapes = count(&s);
+        s.execute("script.run", &json!({"source": "vc.run('shape.rectangle', {x:100,y:0,width:5,height:5});", "name": "t.js"})).unwrap();
+        assert_eq!(count(&s), shapes + 1, "the script drew");
+        assert!(!s.take_shape_drawn(), "a script");
+    }
 }
 
 /// With the perspective grid shown and a plane active, a shape tool's drag journals

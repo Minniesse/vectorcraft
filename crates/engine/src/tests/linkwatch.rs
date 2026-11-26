@@ -171,6 +171,7 @@ fn a_look_that_stores_its_stamps_between_the_polls_reads_keeps_them() {
     assert!(s.link_scan.is_none());
 }
 
+#[cfg(feature = "scripting")]
 #[test]
 fn a_change_during_a_script_waits_for_the_script_to_end() {
     let dir = Folder::new("watch-script");

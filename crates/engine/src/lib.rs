@@ -210,6 +210,7 @@ pub struct Session {
     /// Where the plug-ins `plugin.install` installs are kept; `None`: only for the process
     /// ([`Session::attach_plugin_store`]).
     plugin_dir: Option<std::path::PathBuf>,
+    #[cfg(feature = "scripting")]
     /// The Scripts folder, whose scripts File › Scripts lists; `None`: no folder
     /// ([`Session::attach_scripts_dir`]).
     scripts_dir: Option<std::path::PathBuf>,
@@ -224,6 +225,7 @@ pub struct Session {
     proof_setup_dir: Option<std::path::PathBuf>,
     /// How many proof setup files `view.proofSetup.save` wrote ([`Session::proof_setup_saves`]).
     proof_setup_saves: u64,
+    #[cfg(feature = "scripting")]
     /// The folder of each script's data folder (`Folder.userData`), beside which the grants file
     /// keeps the file access people allowed scripts; `None`: no folder
     /// ([`Session::attach_script_data`]).
@@ -323,19 +325,25 @@ pub struct Session {
     pub recovery: cmd::recovery::Recovery,
     /// The running script's job, while there is one: the mutation lease ([`script`]).
     pub(crate) script_key: Option<script::JobKey>,
+    #[cfg(feature = "scripting")]
     /// The named script engines this session keeps ([`script`]).
     pub(crate) script_engines: script::EnginesKey,
+    #[cfg(feature = "scripting")]
     /// Stops the running script at its next instruction; the same flag for every run.
     pub(crate) script_stop: vectorcraft_js::Interrupt,
+    #[cfg(feature = "scripting")]
     /// The report of the run that ended last.
     pub(crate) script_report: Option<Value>,
+    #[cfg(feature = "scripting")]
     /// The Script Console's lines ([`script::console`]).
     pub(crate) script_console: script::console::Console,
+    #[cfg(feature = "scripting")]
     /// The runs started in this session, which numbers each run's console lines.
     pub(crate) script_runs: u64,
     /// `script.run` starts the job and returns, and the frontend advances it once per frame
     /// ([`Session::script_pump`]). Off, `script.run` advances it to its end.
     pub script_frames: bool,
+    #[cfg(feature = "scripting")]
     /// Each open document's highest next id a run has seen, by [`DocState::uid`].
     pub(crate) script_high_water: std::collections::HashMap<u64, u64>,
     /// While a slice of a script runs in this session.
@@ -453,6 +461,10 @@ mod history;
 mod interaction;
 mod prefs;
 mod sanity;
+#[cfg(feature = "scripting")]
+pub mod script;
+#[cfg(not(feature = "scripting"))]
+#[path = "script_off.rs"]
 pub mod script;
 mod session;
 

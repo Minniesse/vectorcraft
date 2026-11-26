@@ -188,25 +188,29 @@ fn steps_kept_outside_a_command_keep_to_the_shared_budget() {
     assert_eq!(undo_lens(&s), [13, 1]);
     s.commit_interaction().unwrap();
     assert_eq!(undo_lens(&s), [History::MIN_STEPS, 2], "the drag's step counts against the other document's");
-    // A script run across frames, whose step is kept after `script.run` returns.
-    s.history_budget = usize::MAX;
-    assert!(s.set_active(0));
-    moves(&mut s, 4);
-    assert!(s.set_active(1));
-    s.script_frames = true;
-    let source = "for (var i = 0; i < 3000000; i++) {} vc.run('object.move', {dx: 1, dy: 0});";
-    assert_eq!(s.execute("script.run", &json!({"source": source, "name": "t.js"})).unwrap()["running"], true);
-    s.history_budget = 1;
-    let mut slices = 0;
-    let r = loop {
-        slices += 1;
-        assert!(slices < 100_000, "the script ends");
-        if let Some(r) = s.script_pump() {
-            break r;
-        }
-    };
-    assert_eq!(r.unwrap()["ok"], true);
-    assert_eq!(undo_lens(&s), [History::MIN_STEPS, 3], "the run's step counts against the other document's");
+    // Without `scripting` no script runs.
+    #[cfg(feature = "scripting")]
+    {
+        // A script run across frames, whose step is kept after `script.run` returns.
+        s.history_budget = usize::MAX;
+        assert!(s.set_active(0));
+        moves(&mut s, 4);
+        assert!(s.set_active(1));
+        s.script_frames = true;
+        let source = "for (var i = 0; i < 3000000; i++) {} vc.run('object.move', {dx: 1, dy: 0});";
+        assert_eq!(s.execute("script.run", &json!({"source": source, "name": "t.js"})).unwrap()["running"], true);
+        s.history_budget = 1;
+        let mut slices = 0;
+        let r = loop {
+            slices += 1;
+            assert!(slices < 100_000, "the script ends");
+            if let Some(r) = s.script_pump() {
+                break r;
+            }
+        };
+        assert_eq!(r.unwrap()["ok"], true);
+        assert_eq!(undo_lens(&s), [History::MIN_STEPS, 3], "the run's step counts against the other document's");
+    }
     // An edit a frontend makes itself, outside a command.
     s.history_budget = usize::MAX;
     assert!(s.set_active(0));

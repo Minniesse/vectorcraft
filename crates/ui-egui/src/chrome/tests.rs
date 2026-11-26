@@ -449,6 +449,7 @@ fn the_message_of_an_open_with_several_notes_lists_them_on_hover() {
     assert!(!described.as_deref().is_some_and(|d| d.contains("• ")) && shown.is_empty(), "one note lists nothing: {described:?} {shown:?}");
 }
 
+#[cfg(feature = "scripting")]
 /// The status message of a failed script run shows text the script threw as it is, even when it
 /// reads like one of the app's own errors, and translates the words around it; the app's own error
 /// is translated. Both a run that ends in one call and a run the frames take to its end show it.

@@ -16,8 +16,8 @@ accessibility = ["eframe/accesskit"]
 
 [dependencies]
 # The desktop app always has WebAssembly plug-ins (`plugins`); only the CLI and the web build can leave them out.
-vectorcraft-engine = { workspace = true, features = ["bundled-fonts", "heif", "plugins"] }
-vectorcraft-ui-egui = { workspace = true, features = ["bundled-fonts", "interface-fonts", "plugins"] }
+vectorcraft-engine = { workspace = true, features = ["bundled-fonts", "heif", "plugins", "scripting"] }
+vectorcraft-ui-egui = { workspace = true, features = ["bundled-fonts", "interface-fonts", "plugins", "scripting"] }
 vectorcraft-text = { workspace = true }
 # Shared across the Craft suite: the UI runtime and its eframe hooks, settings, control server, file dialogs, the window
 # frame policy and placement store (so VectorCraft matches the rest on Linux, see #217), printing and

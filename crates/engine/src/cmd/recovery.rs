@@ -1219,6 +1219,7 @@ fn remove_copy(s: &Session, file: &str) {
     }
 }
 
+#[cfg(feature = "scripting")]
 /// Closed document `st`'s recovery copy goes.
 pub(crate) fn forget_closed(s: &Session, st: &crate::DocState) {
     if let Some(copy) = &st.recovery {
@@ -1226,6 +1227,7 @@ pub(crate) fn forget_closed(s: &Session, st: &crate::DocState) {
     }
 }
 
+#[cfg(feature = "scripting")]
 /// Writes a copy of every document that needs one now. An error when a document with unsaved
 /// changes would be left without a current copy.
 pub(crate) fn save_copies(s: &mut Session) -> Result<()> {

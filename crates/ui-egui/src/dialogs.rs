@@ -142,7 +142,9 @@ pub mod save_swatch_library;
 pub mod save_symbol_library;
 pub(crate) mod saved_names;
 pub(crate) mod screen_formats;
+#[cfg(feature = "scripting")]
 pub mod script_check;
+#[cfg(feature = "scripting")]
 pub mod script_run;
 pub mod shape_builder_options;
 pub(crate) mod shapes;

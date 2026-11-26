@@ -9,9 +9,12 @@ description = "VectorCraft egui frontend (menus, panels, tools and canvas); swap
 workspace = true
 
 [features]
-default = ["bundled-fonts", "interface-fonts", "plugins"]
+default = ["bundled-fonts", "interface-fonts", "plugins", "scripting"]
 # WebAssembly plug-ins: the engine's `plugins`, and the plug-in dialogs and menus.
 plugins = ["dep:vectorcraft-plugins", "vectorcraft-engine/plugins", "vectorcraft-effects/plugins"]
+# Scripts: the engine's `scripting`, File › Scripts, Check Script…, Other Script… and the Script
+# Console. Without it those menu items, commands and the panel are left out.
+scripting = ["vectorcraft-engine/scripting"]
 # The fonts vectorcraft-text bundles for documents, through the engine's `bundled-fonts`. Off, for
 # an embedder that supplies every document font at run time (`vectorcraft_text::FontDb::add_font`);
 # the interface's own faces are `interface-fonts`.

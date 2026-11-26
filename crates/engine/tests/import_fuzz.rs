@@ -7133,6 +7133,7 @@ proptest! {
 
 // ---------- scripts checked without running them ----------
 
+#[cfg(feature = "scripting")]
 /// A script written for these tests, with invented names: directives in both forms, member chains,
 /// files, a dialog, menu commands, E4X, an operator and a message to another app.
 const SCRIPT_SAMPLE: &str = concat!(
@@ -7151,6 +7152,7 @@ const SCRIPT_SAMPLE: &str = concat!(
     "if (item.typename == 'AcmeShape') { alert(/a[/]b/g.test(s) ? 'yes' : \"no\"); }\n",
 );
 
+#[cfg(feature = "scripting")]
 /// The pieces generated scripts are made of.
 const SCRIPT_PIECES: &[&str] = &[
     "#target acme",
@@ -7196,6 +7198,7 @@ const SCRIPT_PIECES: &[&str] = &[
     " ",
 ];
 
+#[cfg(feature = "scripting")]
 /// `script.check` with `p`, which mustn't panic, and whose lists keep to their limit.
 fn checked(what: &str, p: Value) -> Result<(), TestCaseError> {
     let r = catch_quiet(|| no_panic(vectorcraft_engine::Session::new().execute("script.check", &p)))
@@ -7208,6 +7211,7 @@ fn checked(what: &str, p: Value) -> Result<(), TestCaseError> {
     Ok(())
 }
 
+#[cfg(feature = "scripting")]
 /// The sample the properties mutate reaches every part of the check.
 #[test]
 fn the_script_sample_is_checked_whole() {
@@ -7217,6 +7221,7 @@ fn the_script_sample_is_checked_whole() {
     assert_eq!(r["problems"], json!([]));
 }
 
+#[cfg(feature = "scripting")]
 proptest! {
     #![proptest_config(config())]
 

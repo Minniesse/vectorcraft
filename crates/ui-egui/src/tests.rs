@@ -40,9 +40,13 @@ mod ruler_origin;
 mod save;
 mod saveext;
 mod screenmode;
+#[cfg(feature = "scripting")]
 mod script_check;
+#[cfg(feature = "scripting")]
 mod script_dialogs;
+#[cfg(feature = "scripting")]
 mod script_run;
+#[cfg(feature = "scripting")]
 mod scripts_menu;
 mod scrub;
 mod selectall;

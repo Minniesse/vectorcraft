@@ -107,11 +107,13 @@ impl Session {
             color_settings_file: None,
             #[cfg(feature = "plugins")]
             plugin_dir: None,
+            #[cfg(feature = "scripting")]
             scripts_dir: None,
             metadata_templates_dir: None,
             new_doc_profile_dir: None,
             proof_setup_dir: None,
             proof_setup_saves: 0,
+            #[cfg(feature = "scripting")]
             script_data_dir: None,
             #[cfg(feature = "plugins")]
             plugin_output: None,
@@ -170,12 +172,18 @@ impl Session {
             keyboard_text: false,
             toasts: Default::default(),
             script_key: None,
+            #[cfg(feature = "scripting")]
             script_engines: crate::script::EnginesKey::new(),
+            #[cfg(feature = "scripting")]
             script_stop: vectorcraft_js::Interrupt::new(),
+            #[cfg(feature = "scripting")]
             script_report: None,
+            #[cfg(feature = "scripting")]
             script_console: Default::default(),
+            #[cfg(feature = "scripting")]
             script_runs: 0,
             script_frames: false,
+            #[cfg(feature = "scripting")]
             script_high_water: Default::default(),
             script_in_run: false,
             script_copy_first: cfg!(target_arch = "wasm32"),
