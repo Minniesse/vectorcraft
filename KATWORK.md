@@ -61,7 +61,8 @@ Scripts run on `vectorcraft-js`, the app's ECMAScript interpreter: the Cargo fea
 Script Console, the script dialogs and the status bar's Stop), the CLI and the web app; the desktop app always turns it on.
 KatWork builds the CLI and the web app without it: `vectorcraft-js` is in neither graph, and also not in the engine's or the
 interface's own graph with their defaults off (rows in `scripts/katwork-profile.tsv`; the engine keeps it as a
-dev-dependency for its tests). Without it:
+dev-dependency for its tests). The same holds for `vectorcraft-scriptcheck`, the static checker behind `script.check`.
+Without it:
 
 - every `script.*` command is unknown (test `script_commands_are_unknown`), and File › Open lists no Scripts filter and
   does not check `.js` or `.jsx` files;
@@ -94,7 +95,8 @@ ArtCraft and is not in `scripts/katwork-marks/allow`, or when an image below is 
   identifiers, not marks, and changing them would break upgrades of existing installs.
 - The app icon's attribution (`ASSETS.md` rows, `assets/app-icon/LICENSE.txt`, `assets/app-icon/README.md` provenance): the
   icon is original artwork by the project owner, drawn in ArtCraft; its author and provenance lines are licence and attribution
-  notices, which the licences and the repository's clean-room rule require. The icon itself is kept (R43) and shows no mark.
+  notices, which the licences and the repository's clean-room rule require. The icon itself is kept, as the founder decided
+  that the README keeps its screenshots and the original icon; it shows no mark.
 - PhotoCraft's Windows install folder (`ArtCraft\PhotoCraft`) in `apps/vectorcraft/src/host_services.rs` and
   `docs/control-protocol.md`: the desktop app finds an installed PhotoCraft there; an installer path, kept like this app's own.
 - The Flatpak manifests' read-only permission for `xdg-data/ArtCraft/versions`: the version folder of the separate ArtCraft
