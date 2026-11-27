@@ -16,3 +16,6 @@ vectorcraft-cli	native	-	vectorcraft-js	present
 vectorcraft-web	wasm32	-	vectorcraft-js	present
 vectorcraft-engine	native	-	vectorcraft-js	present
 vectorcraft-ui-egui	native	-	vectorcraft-js	present
+# vectorcraft-scriptcheck (the JavaScript static checker behind `script.check`, used only with `scripting`).
+vectorcraft-cli	native	-	vectorcraft-scriptcheck	present
+vectorcraft-web	wasm32	-	vectorcraft-scriptcheck	present

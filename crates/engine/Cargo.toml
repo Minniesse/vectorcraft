@@ -23,7 +23,7 @@ heif = ["dep:heic-rs", "dep:rayon"]
 plugins = ["dep:vectorcraft-plugins", "vectorcraft-effects/plugins"]
 # Scripts (vectorcraft-js, the app's ECMAScript interpreter): the `script.*` commands, File › Scripts and
 # the Script Console. Without it every `script.*` command is unknown and no script runs.
-scripting = ["dep:vectorcraft-js"]
+scripting = ["dep:vectorcraft-js", "dep:vectorcraft-scriptcheck"]
 
 [dependencies]
 craft-codepage = { workspace = true }
@@ -55,7 +55,8 @@ vectorcraft-plugins = { workspace = true, optional = true }
 sha2 = { version = "0.10", default-features = false }
 vectorcraft-affinity = { workspace = true }
 craft-cdr = { workspace = true }
-vectorcraft-scriptcheck = { workspace = true }
+# The script checker behind `script.check` (cmd/scripts.rs), used only with `scripting`.
+vectorcraft-scriptcheck = { workspace = true, optional = true }
 vectorcraft-js = { workspace = true, optional = true }
 # The commands' parameter schemas (schemas.rs).
 vectorcraft-apischema = { workspace = true }
@@ -124,5 +125,6 @@ wat = { workspace = true }
 ruzstd = { workspace = true }
 # The JavaScript parser's lexer, compared with the script checker's on the same scripts.
 vectorcraft-js = { workspace = true }
+vectorcraft-scriptcheck = { workspace = true }
 # A bundled font's own glyph boxes, for the glyph bounds tests.
 skrifa = { workspace = true }
