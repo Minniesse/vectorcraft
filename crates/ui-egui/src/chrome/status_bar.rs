@@ -125,6 +125,8 @@ pub fn status_bar(app: &mut VectorcraftApp, ui: &mut Ui) {
     });
 
     if stop {
+        // Stop shows only while a script runs, which needs `scripting`.
+        #[cfg(feature = "scripting")]
         app.session.script_interrupt().set();
     }
     // It fails only without a document, when there is no view to turn or zoom.
@@ -312,6 +314,7 @@ fn date_time_now() -> (String, u64) {
 /// words around it are translated.
 pub(crate) fn status_message(app: &VectorcraftApp) -> String {
     let status = app.ui.status.as_str();
+    #[cfg(feature = "scripting")]
     if let Some((before, kept, after)) = app.session.script_authored_failure()
         && status.strip_prefix(before.as_str()).and_then(|rest| rest.strip_suffix(after.as_str())) == Some(kept)
     {

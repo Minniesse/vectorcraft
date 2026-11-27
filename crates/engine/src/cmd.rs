@@ -75,6 +75,10 @@ pub mod patternlib;
 pub mod pdfcmds;
 pub mod perspgrid;
 pub mod place;
+#[cfg(feature = "plugins")]
+pub mod plugin;
+#[cfg(not(feature = "plugins"))]
+#[path = "cmd/plugin_off.rs"]
 pub mod plugin;
 pub(crate) mod plugin_call;
 mod preflight;
@@ -86,6 +90,10 @@ pub mod printtiling;
 pub mod rasterfx;
 mod recolor;
 pub mod recovery;
+#[cfg(feature = "scripting")]
+pub mod scripts;
+#[cfg(not(feature = "scripting"))]
+#[path = "cmd/scripts_off.rs"]
 pub mod scripts;
 pub(crate) mod select;
 pub(crate) mod shaper;

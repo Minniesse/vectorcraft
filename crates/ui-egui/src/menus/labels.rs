@@ -3,6 +3,7 @@ use super::state::{hidden_when_disabled, shortcut_of};
 use super::tree::menu_tree;
 use super::ui_commands::UI_COMMANDS;
 use super::{Node, Value, VectorcraftApp, unbound};
+use crate::plugin_host as vectorcraft_plugins;
 use craft::keymap::Chord;
 
 /// Label for toggles whose text flips (Outline/Preview, Hide/Show …).

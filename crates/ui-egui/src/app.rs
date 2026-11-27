@@ -229,6 +229,7 @@ impl VectorcraftApp {
             save_pdf: None,
             object_dialogs: Default::default(),
             color_dialogs: Default::default(),
+            #[cfg(feature = "plugins")]
             plugin_dialog: None,
             addon_panels: Default::default(),
             addon_dialogs: Default::default(),
@@ -244,6 +245,7 @@ impl VectorcraftApp {
             prefs_changed: false,
             touch_screen: false,
             automation_roots: None,
+            #[cfg(feature = "plugins")]
             pending_plugin_install: None,
             pending_profile_open: None,
             queued_profile_opens: Default::default(),
@@ -379,6 +381,7 @@ impl VectorcraftApp {
     /// copies are left behind.
     pub fn close_decision(&mut self) -> CloseDecision {
         unsaved::finish_pending(self);
+        #[cfg(feature = "scripting")]
         if self.session.script_running() {
             dialogs::script_run::ask_to_close(self);
             return CloseDecision::Hold;
@@ -460,10 +463,12 @@ impl VectorcraftApp {
         if ctx.current_pass_index() == 0 {
             self.poll_finished_work();
         }
+        #[cfg(feature = "scripting")]
         crate::script_runs::poll(self);
         // A panel's, a dialog's or the text input's commit journaled in the frame before.
         crate::panels::actions::after_journaled_edit(self);
         crate::scripts_menu::poll(self, ctx);
+        #[cfg(feature = "scripting")]
         if self.session.script_running()
             && !self.session.script_waiting()
             && self.session.script_dialog().is_none()

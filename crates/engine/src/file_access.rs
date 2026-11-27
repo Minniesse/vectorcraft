@@ -91,6 +91,7 @@ impl AutomationRoots {
         Ok(Some(Arc::new(Self { read: open(read, Access::Read)?, write: open(write, Access::Write)? })))
     }
 
+    #[cfg(any(feature = "plugins", test))]
     /// Roots that grant no access of either kind: inside [`confine`] with them, every path a
     /// command reads or writes is refused.
     pub(crate) fn none() -> Arc<Self> {
@@ -312,6 +313,7 @@ impl LinkedFiles {
 }
 
 impl ScriptGate {
+    #[cfg(feature = "scripting")]
     /// The real paths of the files at `paths` that are files now, each once, for
     /// [`ScriptGate::linked`]. A path refused by its name alone, and one that cannot be resolved,
     /// is left out.
@@ -375,6 +377,7 @@ fn with_gate<T>(gate: Option<Arc<ScriptGate>>, f: impl FnOnce() -> T) -> T {
     f()
 }
 
+#[cfg(feature = "scripting")]
 /// Runs `f`, a command a script runs, with `gate` in force on this thread: every path it reads or
 /// writes must pass the gate as well as the automation roots, also when the run itself is
 /// [`unconfined`] (one the person started). Reads of the app's own folders, inside an
@@ -456,11 +459,13 @@ thread_local! {
     static WRITES: std::cell::RefCell<Option<Vec<(String, Stamp)>>> = const { std::cell::RefCell::new(None) };
 }
 
+#[cfg(feature = "scripting")]
 /// Starts recording the paths [`check_write`] allows on this thread.
 pub(crate) fn start_recording_writes() {
     WRITES.with(|w| *w.borrow_mut() = Some(Vec::new()));
 }
 
+#[cfg(feature = "scripting")]
 /// Ends recording → the recorded paths whose file exists now: after a command that `succeeded`,
 /// all of them; after one that failed, those made or changed since they were allowed.
 pub(crate) fn finish_recording_writes(succeeded: bool) -> Vec<String> {
@@ -524,6 +529,7 @@ fn inside(path: &Path, root: &Path) -> bool {
     root.components().all(|r| path.next().is_some_and(|p| same_component(p, r)))
 }
 
+#[cfg(feature = "scripting")]
 /// Is `path` `root` or inside it, both with their links followed, compared as [`AutomationRoots`]
 /// compares them?
 pub(crate) fn path_inside(path: &Path, root: &Path) -> bool {
@@ -598,6 +604,7 @@ pub(crate) struct ScriptScope {
     open: Vec<PathBuf>,
 }
 
+#[cfg(feature = "scripting")]
 /// Why a script's file was not read.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) enum ScriptRead {
@@ -612,11 +619,13 @@ pub(crate) enum ScriptRead {
 }
 
 impl ScriptScope {
+    #[cfg(feature = "scripting")]
     /// The scope of a script run from a file in folder `dir`: that folder.
     pub(crate) fn of_folder(dir: &Path) -> Self {
         Self { roots: std::fs::canonicalize(dir).ok().into_iter().collect(), ..Self::default() }
     }
 
+    #[cfg(feature = "scripting")]
     /// Grants the folder `real`, a path with its links followed, with everything inside it.
     pub(crate) fn add(&mut self, real: PathBuf) {
         if !self.roots.contains(&real) {
@@ -624,6 +633,7 @@ impl ScriptScope {
         }
     }
 
+    #[cfg(feature = "scripting")]
     /// Grants the file `real`, a path with its links followed: that path and nothing below it.
     pub(crate) fn add_file(&mut self, real: PathBuf) {
         if !self.files.contains(&real) {
@@ -631,17 +641,20 @@ impl ScriptScope {
         }
     }
 
+    #[cfg(feature = "scripting")]
     /// Takes back the grant of the folder (`folder`) or file `real` that [`ScriptScope::add`] or
     /// [`ScriptScope::add_file`] gave.
     pub(crate) fn remove(&mut self, real: &Path, folder: bool) {
         if folder { self.roots.retain(|r| r != real) } else { self.files.retain(|r| r != real) }
     }
 
+    #[cfg(feature = "scripting")]
     /// Is nothing granted?
     fn is_empty(&self) -> bool {
         self.roots.is_empty() && self.files.is_empty()
     }
 
+    #[cfg(feature = "scripting")]
     /// Keeps the folder `real` (links followed) and everything in it out, but for `open` and the
     /// places inside it.
     pub(crate) fn fence(&mut self, real: PathBuf, open: &[PathBuf]) {
@@ -649,11 +662,13 @@ impl ScriptScope {
         self.open.extend(open.iter().cloned());
     }
 
+    #[cfg(feature = "scripting")]
     /// Leaves the place `real` (links followed) and everything in it open inside a fenced folder.
     pub(crate) fn fence_open(&mut self, real: PathBuf) {
         self.open.push(real);
     }
 
+    #[cfg(feature = "scripting")]
     /// The granted folders, with their links followed.
     pub(crate) fn roots(&self) -> &[PathBuf] {
         &self.roots
@@ -673,6 +688,7 @@ impl ScriptScope {
         self.fenced.iter().any(|f| inside(real, f) && !self.open.iter().any(|o| inside(o, f) && inside(real, o)))
     }
 
+    #[cfg(feature = "scripting")]
     /// The scope of a script run from a file in the folder whose real path, with its links already
     /// followed, is `real`: that folder, which is not looked up again.
     pub(crate) fn of_real_folder(real: PathBuf) -> Self {
@@ -688,6 +704,7 @@ impl ScriptScope {
             || (cfg!(windows) && (windows_name_refusal(&text).is_some() || network_path(&text)))
     }
 
+    #[cfg(feature = "scripting")]
     /// The real path of the file at `path` and its first `max` bytes, at most.
     pub(crate) fn read(&self, path: &Path, max: usize) -> Result<(PathBuf, Vec<u8>), ScriptRead> {
         use std::io::Read;
@@ -725,11 +742,13 @@ impl ScriptScope {
         Ok((real, bytes))
     }
 
+    #[cfg(feature = "scripting")]
     /// The first granted folder, as people read it (`None` for a script given as text).
     pub(crate) fn folder(&self) -> Option<PathBuf> {
         self.roots.first().map(|r| crate::cmd::findfiles::plain(r.clone()))
     }
 
+    #[cfg(feature = "scripting")]
     /// Does the absolute path `path` name a granted file, a granted folder or a place inside one,
     /// by its names alone, without regard to case? A path that does not is refused before the file
     /// system is asked anything about it.
@@ -743,6 +762,7 @@ impl ScriptScope {
         path.is_absolute() && (self.roots.iter().any(names_under) || self.files.iter().any(names_under))
     }
 
+    #[cfg(feature = "scripting")]
     /// The real path of the file or folder at `path`, which must be absolute: refused as
     /// [`ScriptScope::read`] refuses a path, and also when its names alone place it outside every
     /// granted folder, in which case the file system is not asked about it.
@@ -770,6 +790,7 @@ impl ScriptScope {
         Ok(real)
     }
 
+    #[cfg(feature = "scripting")]
     /// The real path that writing to `path` writes: `path` with its links followed (the last
     /// name's too only when `follow`), and for a path that does not exist yet, its nearest existing
     /// folder's links followed and the rest appended. Refused as [`ScriptScope::locate`] refuses a
@@ -821,6 +842,7 @@ impl ScriptScope {
         Ok(real)
     }
 
+    #[cfg(feature = "scripting")]
     /// Is the missing `path` inside a granted place: with the links of the nearest folder above it
     /// that exists followed, and the rest of its names appended, is it granted? On a file system
     /// where case matters, `MAIN/x` beside the granted `main` is outside, whether `MAIN` exists or
@@ -832,6 +854,7 @@ impl ScriptScope {
         self.allows(&real.join(rest))
     }
 
+    #[cfg(feature = "scripting")]
     /// What the file or folder at `path` is, located as [`ScriptScope::locate`] locates it. Whether
     /// it is hidden is a link's own, and the rest is what the link leads to.
     pub(crate) fn stat(&self, path: &Path) -> Result<ScriptEntry, ScriptRead> {
@@ -855,6 +878,7 @@ impl ScriptScope {
         })
     }
 
+    #[cfg(feature = "scripting")]
     /// The names in the folder at `path` that `keep` keeps, with whether each is a folder, in the
     /// order of their names. A name whose links lead out of every granted folder, or out of the
     /// automation read roots in force, is left out. More
@@ -887,9 +911,11 @@ impl ScriptScope {
     }
 }
 
+#[cfg(feature = "scripting")]
 /// The most names [`ScriptScope::list`] looks at in one folder.
 pub(crate) const MAX_LISTED: usize = 65_536;
 
+#[cfg(feature = "scripting")]
 /// A file or folder as [`ScriptScope::stat`] gives it.
 #[derive(Clone, Debug)]
 pub(crate) struct ScriptEntry {
@@ -910,12 +936,14 @@ thread_local! {
     static PROBES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
 }
 
+#[cfg(feature = "scripting")]
 fn probed() {
     PROBES.with(|p| p.set(p.get().saturating_add(1)));
 }
 
 /// How many paths [`ScriptScope::locate`] has asked the file system about on this thread.
 #[cfg(test)]
+#[cfg(feature = "scripting")]
 pub(crate) fn script_probes() -> usize {
     PROBES.with(std::cell::Cell::get)
 }
@@ -964,6 +992,7 @@ mod tests {
         let _ = std::fs::remove_dir_all(base);
     }
 
+    #[cfg(feature = "scripting")]
     /// A scope narrowed to the calling thread keeps the script gate of both: a script command that
     /// carries on work saved without a gate reads only what its gate allows, and with a gate saved
     /// too, only what both allow; reads are exempt only where both scopes exempt them.
@@ -994,6 +1023,7 @@ mod tests {
         let _ = std::fs::remove_dir_all(base);
     }
 
+    #[cfg(feature = "scripting")]
     /// A scope narrowed again and again keeps every gate it was narrowed by: a gate an earlier
     /// narrowing joined to the chain still refuses what it refused before.
     #[test]
@@ -1020,6 +1050,7 @@ mod tests {
         let _ = std::fs::remove_dir_all(base);
     }
 
+    #[cfg(feature = "scripting")]
     /// A file an open document linked to when the run began is readable through the gate; its path
     /// written with `..`, writing it, a file next to it and a file that was not there when the gate
     /// was made are not allowed, and the automation roots still apply.
@@ -1047,6 +1078,7 @@ mod tests {
         let _ = std::fs::remove_dir_all(base);
     }
 
+    #[cfg(feature = "scripting")]
     /// A linked file in a folder the script's scope keeps out, such as the settings folder, is not
     /// read through the gate; one in a place left open there is.
     #[test]
@@ -1071,6 +1103,7 @@ mod tests {
         let _ = std::fs::remove_dir_all(base);
     }
 
+    #[cfg(feature = "scripting")]
     /// A path read through the linked files gives no access to the file it leads to after it is
     /// pointed elsewhere by a link in one of its folders.
     #[test]
@@ -1110,6 +1143,7 @@ mod tests {
         let _ = std::fs::remove_dir_all(base);
     }
 
+    #[cfg(feature = "scripting")]
     /// A link to a linked file read through the gate counts only while it leads to that file.
     #[cfg(unix)]
     #[test]

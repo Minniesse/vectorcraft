@@ -9,7 +9,7 @@ description = "VectorCraft engine: sessions, history, selection, the command reg
 workspace = true
 
 [features]
-default = ["bundled-fonts", "heif"]
+default = ["bundled-fonts", "heif", "plugins", "scripting"]
 # The fonts vectorcraft-text bundles (see its `bundled-fonts`). Embedders that supply every font at
 # run time (`vectorcraft_text::FontDb::add_font`) build with `default-features = false`.
 bundled-fonts = ["vectorcraft-text/bundled-fonts"]
@@ -17,6 +17,13 @@ bundled-fonts = ["vectorcraft-text/bundled-fonts"]
 # feature still recognizes the files and refuses them with a message. The apps list it beside
 # `bundled-fonts`.
 heif = ["dep:heic-rs", "dep:rayon"]
+# WebAssembly plug-ins (vectorcraft-plugins, its wasmi host): the `plugin.*` commands, the Plug-ins
+# folder loaded at startup, exporter, importer and live-effect plug-ins. Without it every `plugin.*`
+# command is unknown and a plug-in effect a document names draws as when it isn't installed.
+plugins = ["dep:vectorcraft-plugins", "vectorcraft-effects/plugins"]
+# Scripts (vectorcraft-js, the app's ECMAScript interpreter): the `script.*` commands, File › Scripts and
+# the Script Console. Without it every `script.*` command is unknown and no script runs.
+scripting = ["dep:vectorcraft-js", "dep:vectorcraft-scriptcheck"]
 
 [dependencies]
 craft-codepage = { workspace = true }
@@ -29,6 +36,8 @@ vectorcraft-doc = { workspace = true }
 vectorcraft-tools = { workspace = true }
 vectorcraft-text = { workspace = true }
 vectorcraft-render = { workspace = true }
+# Named for its `plugins` (live-effect plug-ins in what is drawn); it is in the graph through render anyway.
+vectorcraft-effects = { workspace = true }
 vectorcraft-pathops = { workspace = true }
 # The panels and hinges of a packaging blank (Packaging Tools' Check Fold Lines).
 vectorcraft-three-d = { workspace = true }
@@ -40,11 +49,15 @@ vectorcraft-pdf = { workspace = true }
 vectorcraft-cad = { workspace = true }
 vectorcraft-eps = { workspace = true }
 vectorcraft-metafile = { workspace = true }
-vectorcraft-plugins = { workspace = true }
+vectorcraft-plugins = { workspace = true, optional = true }
+# The SHA-256 scripts record (`plugin_host::permissions::sha256_hex`) in a build without `plugins`;
+# the same crate and version vectorcraft-plugins uses.
+sha2 = { version = "0.10", default-features = false }
 vectorcraft-affinity = { workspace = true }
 craft-cdr = { workspace = true }
-vectorcraft-scriptcheck = { workspace = true }
-vectorcraft-js = { workspace = true }
+# The script checker behind `script.check` (cmd/scripts.rs), used only with `scripting`.
+vectorcraft-scriptcheck = { workspace = true, optional = true }
+vectorcraft-js = { workspace = true, optional = true }
 # The commands' parameter schemas (schemas.rs).
 vectorcraft-apischema = { workspace = true }
 image = { workspace = true }
@@ -112,5 +125,6 @@ wat = { workspace = true }
 ruzstd = { workspace = true }
 # The JavaScript parser's lexer, compared with the script checker's on the same scripts.
 vectorcraft-js = { workspace = true }
+vectorcraft-scriptcheck = { workspace = true }
 # A bundled font's own glyph boxes, for the glyph bounds tests.
 skrifa = { workspace = true }

@@ -44,6 +44,8 @@ vectorcraft-testkit = { workspace = true }
 vectorcraft-text = { workspace = true, features = ["test-fonts"] }
 # Live-effect plug-ins the cache tests install, written in WebAssembly text.
 vectorcraft-plugins = { workspace = true }
+# ... and the effects that run them.
+vectorcraft-effects = { workspace = true, features = ["plugins"] }
 wat = { workspace = true }
 # Decoders the export tests read their files back with.
 image = { workspace = true }

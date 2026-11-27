@@ -124,7 +124,8 @@ pub(crate) fn sync(app: &mut VectorcraftApp) {
 }
 
 macro_rules! pumps {
-    ($app:ident, $ctx:ident; $($path:path),+ $(,)?) => { $( $path($app, $ctx); )+ };
+    // A pump may carry a `#[cfg]` (those of the script dialogs need `scripting`).
+    ($app:ident, $ctx:ident; $($(#[$m:meta])* $path:path),+ $(,)?) => { $( $(#[$m])* $path($app, $ctx); )+ };
 }
 
 /// Runs once per frame after the shell pass: every dialog module's pump, then the held dialogs.
@@ -168,6 +169,7 @@ pub(crate) fn pump(app: &mut VectorcraftApp, ctx: &egui::Context) {
         super::preset_manager::pump,
         super::print::pump,
         super::javascript_files::pump,
+        #[cfg(feature = "scripting")]
         super::script_check::pump,
         super::object_dialogs::pump,
         super::transform::pump,
@@ -204,6 +206,7 @@ pub(crate) fn pump(app: &mut VectorcraftApp, ctx: &egui::Context) {
         super::confirm::pump,
         super::confirm::pump_missing_font,
         super::actions::pump,
+        #[cfg(feature = "scripting")]
         super::script_run::pump,
         super::color_picker::pump,
         super::proof_setup::pump,

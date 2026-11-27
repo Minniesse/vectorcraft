@@ -195,6 +195,7 @@ impl Default for History {
     }
 }
 
+#[cfg(feature = "scripting")]
 /// What [`History::put_back`] needs to give a history back as it was when [`History::mark`] took
 /// it: the newest undo and redo steps, and where each stack stood under them. It holds no other
 /// step, so taking one costs the same however many the history holds.
@@ -206,6 +207,7 @@ pub(crate) struct HistoryMark {
     rewrites: u64,
 }
 
+#[cfg(feature = "scripting")]
 /// One stack of a [`HistoryMark`].
 struct StackMark {
     len: usize,
@@ -214,6 +216,7 @@ struct StackMark {
     newest: Option<HistoryEntry>,
 }
 
+#[cfg(feature = "scripting")]
 impl StackMark {
     fn of(steps: &[HistoryEntry]) -> Self {
         let len = steps.len();
@@ -282,6 +285,7 @@ impl History {
         self.redo.drain(..n);
     }
 
+    #[cfg(feature = "scripting")]
     /// A [`HistoryMark`] of the history now. Until [`History::release`] or [`History::put_back`],
     /// [`History::trim`] lets no step go, so the steps under the newest one stay where they are, and
     /// [`History::clear_redo`] sets the redo steps aside.
@@ -310,6 +314,7 @@ impl History {
         }
     }
 
+    #[cfg(feature = "scripting")]
     /// Keeps the history as it is now: the limits `mark` held back apply again.
     pub(crate) fn release(&mut self, mark: &HistoryMark) {
         self.held = false;
@@ -319,6 +324,7 @@ impl History {
         self.trim();
     }
 
+    #[cfg(feature = "scripting")]
     /// Gives the history back as it was at `mark`. → `false` when that is not possible: an undo or
     /// redo step under the newest one was removed or changed in place since.
     pub(crate) fn put_back(&mut self, mark: HistoryMark) -> bool {

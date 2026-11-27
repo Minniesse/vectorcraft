@@ -153,10 +153,12 @@ fn the_effect_editor_sets_what_its_dialog_rows_change() {
     assert_eq!(editor_params(&e).get("angle"), Some(&json!(270)));
 }
 
+#[cfg(feature = "plugins")]
 /// A plug-in's choice is a dropdown of the plug-in's own values, also when the parameter is
 /// called `mode` and its value names a blend mode.
 #[test]
 fn a_plug_in_choice_lists_the_plug_ins_values() {
+    #[cfg(feature = "plugins")]
     use vectorcraft_plugins::wat as tpl;
     let params = r#"{"mode":{"type":"choice","options":["normal","screen","dots"],"default":"screen"}}"#;
     let src = tpl::module(&tpl::manifest("test.ui.inlinechoice", "effect", params), tpl::ECHO, "", 1);
@@ -180,11 +182,13 @@ fn a_plug_in_choice_lists_the_plug_ins_values() {
     assert_eq!(panel.value("Mode").as_deref(), Some("screen"));
 }
 
+#[cfg(feature = "plugins")]
 /// A plug-in effect's editor labels its parameters, shows their values in their units and leaves
 /// out those whose `visibleWhen` isn't met, as the effect's dialog does, and reads a typed number
 /// list the same way.
 #[test]
 fn a_plug_in_effect_s_editor_follows_its_manifest() {
+    #[cfg(feature = "plugins")]
     use vectorcraft_plugins::wat as tpl;
     let params = r#"{"outline":{"type":"bool","default":true,"label":"Outline"},
             "spacing":{"type":"number","min":0.1,"max":10,"default":1.5,"label":"Spacing","unit":"mm","help":"Distance between the lines."},

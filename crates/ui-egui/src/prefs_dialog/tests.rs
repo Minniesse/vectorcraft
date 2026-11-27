@@ -700,3 +700,20 @@ fn every_description_names_a_setting_and_fits_in_every_language() {
     }
     assert!(bad.is_empty(), "{}", bad.join("\n"));
 }
+
+/// The KatWork build: without `plugins` Preferences shows no plug-in setting, and without `scripting`
+/// no script setting.
+#[test]
+fn katwork_hidden_preferences() {
+    let mut a = app();
+    open(&mut a, None);
+    let mut hidden: Vec<&str> = vec![];
+    if cfg!(not(feature = "plugins")) {
+        hidden.extend(["pluginsFolder", "pluginInstructionBudget"]);
+    }
+    if cfg!(not(feature = "scripting")) {
+        hidden.push("showExternalScriptWarning");
+    }
+    let shown: Vec<_> = hidden.into_iter().filter(|k| row_state(&mut a, k).is_some()).collect();
+    assert!(shown.is_empty(), "rows of features the build leaves out: {shown:?}");
+}

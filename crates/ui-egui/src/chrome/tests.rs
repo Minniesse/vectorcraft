@@ -261,7 +261,7 @@ fn hints_name_keys_as_the_menus_do() {
 }
 
 /// As the window narrows, the app bar gives up its right-hand controls one at a time, each before the one after it:
-/// Discord, Explore tutorials, Arrange Documents, the search and last the workspace switcher; each keeps its whole width
+/// Explore tutorials, Arrange Documents, the search and last the workspace switcher; each keeps its whole width
 /// until it goes. Whatever shows lies inside the window. Safe Mode's rows are in `tests/safe_mode.rs`, whose
 /// process owns the Safe Mode switch.
 #[test]
@@ -272,7 +272,7 @@ fn the_app_bar_gives_up_its_right_hand_controls_in_order() {
     let mut bar = Shown::new(app, egui::vec2(1600.0, 600.0), |app, ui| app.ui(ui));
     // PLAN: shell-w9 builds Explore tutorials as `IconButton::command(.., "window.learn")`, whose command label is "Learn"; the button keeps production's name "Explore tutorials".
     // In the order the bar gives them up; the search's name goes on with its chord.
-    let controls = ["Discord", "Explore tutorials", "Arrange Documents", "Search commands", "Choose a workspace"];
+    let controls = ["Explore tutorials", "Arrange Documents", "Search commands", "Choose a workspace"];
     let mut before: Option<Vec<bool>> = None;
     let mut search_widths = vec![];
     for width in (30..=160).rev().map(|w| w as f32 * 10.0) {
@@ -290,7 +290,7 @@ fn the_app_bar_gives_up_its_right_hand_controls_in_order() {
         if let Some(before) = &before {
             assert!(on.iter().zip(before).all(|(now, was)| !now || *was), "{width}: a control came back as the window narrowed: {on:?}");
         }
-        if let Some(search) = shown[3] {
+        if let Some(search) = shown[2] {
             search_widths.push(search.rect.width());
         }
         before = Some(on);
@@ -449,6 +449,7 @@ fn the_message_of_an_open_with_several_notes_lists_them_on_hover() {
     assert!(!described.as_deref().is_some_and(|d| d.contains("• ")) && shown.is_empty(), "one note lists nothing: {described:?} {shown:?}");
 }
 
+#[cfg(feature = "scripting")]
 /// The status message of a failed script run shows text the script threw as it is, even when it
 /// reads like one of the app's own errors, and translates the words around it; the app's own error
 /// is translated. Both a run that ends in one call and a run the frames take to its end show it.

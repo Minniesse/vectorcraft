@@ -107,6 +107,7 @@ pub(crate) fn state_key(app: &VectorcraftApp, input: Option<u64>) -> u64 {
     // The Align To choice: Object › Align's checks and the Distribute buttons with the Artboard tool.
     app.ui.align_to.hash(&mut h);
     crate::panels::actions::menu::key(app).hash(&mut h);
+    #[cfg(feature = "scripting")]
     crate::panels::script_console::key(app).hash(&mut h);
     h.finish()
 }

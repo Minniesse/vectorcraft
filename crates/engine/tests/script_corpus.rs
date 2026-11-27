@@ -9,6 +9,8 @@
 //! folder (`Folder.userData`) and, through the temporary-folder variables xtask sets, the run's
 //! temporary folder (`Folder.temp`). The other tests check the result line on scripts given as
 //! text.
+
+#![cfg(feature = "scripting")]
 // Integration tests: unwrapping and panicking on failure is fine here, unlike in shipped code (AGENTS.md › Robustness).
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 

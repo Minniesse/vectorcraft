@@ -175,6 +175,7 @@ fn an_undo_group_lets_no_other_documents_steps_go_until_it_ends() {
     assert!(history_bytes(&s) <= s.history_budget);
 }
 
+#[cfg(feature = "scripting")]
 #[test]
 fn steps_kept_outside_a_command_keep_to_the_shared_budget() {
     let mut s = session_with_rects(50);

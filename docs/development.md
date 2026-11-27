@@ -140,7 +140,7 @@ The window runs natively on Wayland (eframe's `wayland` feature) and on X11. On 
 
 ## Fonts: craft-fonts (optional build input)
 
-Font files are never committed to this repository. Fonts shared by the Crafting Apps live in
+Font files are never committed to this repository. Fonts shared by the Craft apps live in
 [storytold/craft-fonts](https://github.com/storytold/craft-fonts). To add
 a font, add it there. (The Latin fonts in `assets/fonts/` predate the rule and stay.)
 

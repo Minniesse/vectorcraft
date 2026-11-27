@@ -1,3 +1,4 @@
+use crate::plugin_host as vectorcraft_plugins;
 use craft::behavior::{CanvasView, PixelSize};
 use craft::platform::clock::monotonic_ms;
 use craft::theme::Tokens;

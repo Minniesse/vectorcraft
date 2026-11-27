@@ -17,6 +17,7 @@ fn empty_dir(dir: std::path::PathBuf) -> std::path::PathBuf {
     dir
 }
 
+#[cfg(feature = "plugins")]
 /// `run` and `mcp --headless` refuse `plugin.install` with this param unless the process was started
 /// with `--allow-plugin-grants`.
 fn approval_param_needs_the_start_up_flag(key: &str, value: Value) {
@@ -73,6 +74,7 @@ fn approval_param_needs_the_start_up_flag(key: &str, value: Value) {
     assert_eq!(accepted["isError"], false, "with the flag: {accepted}");
 }
 
+#[cfg(feature = "plugins")]
 /// `run` and `mcp --headless` refuse `plugin.install`'s `grant` and `allowHeavy` unless the process was
 /// started with `--allow-plugin-grants`, which `mcp` won't take with `--connect` or the automation roots.
 #[test]

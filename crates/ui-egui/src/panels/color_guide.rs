@@ -1258,6 +1258,7 @@ mod tests {
         assert_eq!(base_color(&app), shown, "the base keeps the color it showed");
     }
 
+    #[cfg(feature = "scripting")]
     /// A script run ends the link: a script that deletes the spot color and makes another of the
     /// same name does not make the new one the base, and the base keeps the color it showed. Listing
     /// scripts or plug-ins keeps it.
@@ -1268,7 +1269,10 @@ mod tests {
         frame(&mut app, &ctx);
         // Commands that only list scripts or plug-ins keep the link, also as batch steps.
         app.run("script.engines", json!({})).unwrap();
-        app.run("plugin.list", json!({})).unwrap();
+        // `plugin.list` is a command only with the `plugins` feature.
+        if cfg!(feature = "plugins") {
+            app.run("plugin.list", json!({})).unwrap();
+        }
         app.run("command.batch", json!({"commands": [{"command": "script.engines"}]})).unwrap();
         assert!(app.ui.color_guide_spot.is_some(), "a script or plug-in listing");
         let shown = base_color(&app);

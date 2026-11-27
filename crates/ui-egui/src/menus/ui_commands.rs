@@ -30,6 +30,7 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "Cmd+O",
         "{path?, params?} → with a path, document.open's result {index, title, format, warnings, …} (null when a dialog asks first or a library loads); `params` are the parameters of the importer plug-in that opens the file",
     ),
+    #[cfg(feature = "plugins")]
     (
         "file.openWith",
         "Open With",
@@ -1056,6 +1057,7 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "{index: zero-based result index} show a tool's location, a tutorial's steps in Help, or a command's menu path and shortcut without running it; an invalid index is an error. Returns {result: chosen result, location: tool location, tutorial id, or command path}",
     ),
     ("help.discover.back", "Back", "", "{} return from a Help result to its search results without changing the query"),
+    #[cfg(feature = "plugins")]
     (
         "help.safeMode",
         "Safe Mode…",
@@ -1361,6 +1363,7 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "",
         "{amount?: 0..1 (how far the blank is folded), view?: front|back|left|right|top|bottom|threeQuarter, rotateX?: deg -180..180 (the top toward the viewer), rotateY?: deg -180..180 (the right side toward the viewer), zoom?: 0.1..8 (1 fits the folded blank), perspective?: deg 0..160 (field of view; 0 for none), inside?: #rrggbb, the name of a swatch with a plain color, or empty for white (the board's inside), showFoldLines?: bool, base?: [x, y] (the panel under this point stays in place; an error when it is in no panel) or null (the largest panel)} set the Fold Preview window (ui.inspect: ui.fold_preview), which folds the blank that the document's shown fold lines make (addon.packaging.fold) with the document's art printed on the outside, show it and draw it again; view and zoom also center the view. A value of the wrong kind or out of range is an error and sets nothing → the window's settings and frame: the last frame's {width, height (pixels), foldMs, drawMs} or null",
     ),
+    #[cfg(feature = "scripting")]
     (
         "ui.copyScriptConsole",
         "Copy Script Console",
@@ -1983,24 +1986,28 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "",
         "{name?: a saved preset to edit | preset?: the preset a new one starts from (default [Default])} open the preset editor (dialog `printPreset`: the Print dialog's settings fields plus `name`); OK runs print.presets.save and returns to Print Presets",
     ),
+    #[cfg(feature = "plugins")]
     (
         "plugin.dialog",
         "Plug-in…",
         "",
         "{id: an object filter plug-in (plugin.list), params?: {…}} Object › Plug-ins: run the filter at once when it takes no parameters or params are given (plugin.run), else open its dialog (dialog `plugin`: a field per parameter, `__plugin` the id, live preview; OK runs plugin.run as one undo step). A heavy filter, and a filter that lists `progress` and no commandAllowlist, run in the background when they run at once or OK runs them without a kept preview → {background: true, status} (see plugin.cancelRuns)",
     ),
+    #[cfg(feature = "plugins")]
     (
         "ui.installPlugin",
         "Install Plug-in…",
         "",
         "{path?: a .wasm file | dataBase64?: the module, name?: the file name shown as its source (with dataBase64), replace?: bool (true: the user agreed it takes the place of the plug-in with its id, as plugin.install), hash?: the module's SHA-256 (as plugin.install)} install a WebAssembly plug-in (plugin.install); without a path pick one (the web opens the browser's file picker; File › Open of a .wasm installs it too). A plug-in that lists permissions the user hasn't granted it asks the user first, showing its name, id, version, file SHA-256 and what each permission lets it do, so does a filter that asks for a heavy budget, and so does one without replace that would take the place of another module with its id and get its settings and cache (needsReplace in plugin.inspect), showing its id and file SHA-256: OK installs it if the file still has the SHA-256 shown, Cancel installs nothing. Only a person can press OK: ui.dialog.confirm, answer_dialog and synthetic input are refused. When automation asked (a control or MCP request, synthetic input, or a file dialog one of them opened, even when the person picked the file), replace: true doesn't skip the question about replacing, and nothing in the dialog installs it, the person's OK included: the person chooses Object › Plug-ins › Install Plug-in… to install it → plugin.install's result | {pending: \"pluginInstall\"} while it asks | {pending: \"pluginInstall\", approval: \"personMustStartInstall\"} while it asks what automation asked | null on the web without path or dataBase64, once the browser's file picker opens (the picked file is handled as above)",
     ),
+    #[cfg(feature = "plugins")]
     (
         "plugin.cancelRuns",
         "Cancel Plug-in Run",
         "",
         "{} stop every filter running in the background (its progress window's Cancel): it stops at the next slice of its budget and changes nothing → {cancelled: n}",
     ),
+    #[cfg(feature = "plugins")]
     (
         "plugin.hideRuns",
         "Continue in Background",
@@ -2019,18 +2026,21 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "",
         "{} close the progress window of the Image Traces running in the background; they go on, shown in the status bar → {hidden: n}",
     ),
+    #[cfg(feature = "scripting")]
     (
         "ui.runScript",
         "Other Script…",
         "Cmd+F12",
         "{path? | source?, name?} run a .js or .jsx file (script.run), after the warning unless Preferences › General › Show External Script Warning is off (dialog `scriptRun`: `name`, `script`, `dontShow`); without a file pick one (the web opens the browser's file picker)",
     ),
+    #[cfg(feature = "scripting")]
     (
         crate::scripts_menu::COMMAND,
         "Run Script",
         "",
         "{path: a script's path as script.listInstalled gives it} run a script of the Scripts folder, as its File › Scripts item does (script.run with installed reads the file once, checks it again and runs that text, so its #include lines and $.evalFile read in the folder that read found), without the warning Other Script… shows; a file that is no longer a .js or .jsx file in the folder or a subfolder at most 4 levels below it, or that is or lies behind a link or is hidden, is not run, and the menu's listing is read again",
     ),
+    #[cfg(feature = "scripting")]
     (
         "ui.checkScript",
         "Check Script…",

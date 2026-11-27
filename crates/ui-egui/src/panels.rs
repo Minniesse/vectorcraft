@@ -41,7 +41,15 @@ pub mod pattern_options;
 pub mod preflight;
 pub mod properties;
 pub mod retype;
+#[cfg(feature = "scripting")]
 pub mod script_console;
+/// Window › Script Console in a build without `scripting`: only its id, for the menu that
+/// [`crate::left_out`] leaves it out of.
+#[cfg(not(feature = "scripting"))]
+pub mod script_console {
+    /// The panel's id.
+    pub const ID: &str = "scriptConsole";
+}
 pub mod separations;
 pub mod stroke;
 pub mod svg_interactivity;
@@ -337,6 +345,7 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         asset_export::ID => asset_export::show(app, ui),
         css_properties::ID => css_properties::show(app, ui),
         three_d::ID => three_d::show(app, ui),
+        #[cfg(feature = "scripting")]
         script_console::ID => script_console::show(app, ui),
         learn::ID => learn::show(app, ui),
         discover::ID => discover::show(app, ui),
@@ -448,6 +457,7 @@ static PANEL_MENUS: &[PanelMenuSource] = &[
     menu!(asset_export::ID, asset_export),
     menu!(css_properties::ID, css_properties),
     menu!(variables::ID, variables),
+    #[cfg(feature = "scripting")]
     menu!(script_console::ID, script_console),
     menu!(retype::ID, retype, run: retype::command),
     menu!("actions", actions_menu),
@@ -1007,6 +1017,7 @@ mod tests_maskview;
 #[cfg(test)]
 mod tests_panel_rows;
 #[cfg(test)]
+#[cfg(feature = "scripting")]
 mod tests_script_console;
 #[cfg(test)]
 mod tests_stroke;

@@ -1,6 +1,7 @@
 //! The command palette: the commands a pick runs, the tools, the panels and the Effect menu's
 //! items as the framework palette's entries, with their search index.
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -1464,7 +1465,11 @@ mod tests {
             ("ui.action.playAt", "Play Action (ui.action.playAt)"),
             ("ui.batchDialog", "Batch…"),
             ("ui.flattenerPreview", "Flattener Preview"),
-        ] {
+        ]
+        .into_iter()
+        // A build without plug-ins leaves Continue in Background of plug-in runs out (`left_out`).
+        .filter(|(id, _)| !crate::left_out::hidden(id, &serde_json::Value::Null))
+        {
             assert_eq!(shown(id), want, "{id}");
         }
         assert!(shown("perspective.grid.rulers").contains("Perspective Grid"), "{}", shown("perspective.grid.rulers"));
@@ -1490,7 +1495,8 @@ mod tests {
     #[test]
     fn the_paths_of_results_that_share_a_name_translate() {
         let ids: Vec<String> = items().into_iter().map(|(_, id)| id).collect();
-        for (id, _) in CONTEXTS {
+        // A command the build leaves out (`left_out`) is no result.
+        for (id, _) in CONTEXTS.iter().filter(|(id, _)| !crate::left_out::hidden(id, &serde_json::Value::Null)) {
             assert!(ids.iter().any(|i| i == id), "{id} is a result");
         }
         let mut paths: Vec<String> = CONTEXTS.iter().map(|(_, path)| path.to_string()).collect();
@@ -1540,11 +1546,13 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "plugins")]
     /// Each filter plug-in has one result, also when two share a name: its menu path translates,
     /// the plug-in's name does not, and a pick runs that filter (a dialog for one with parameters,
     /// nothing with no document open).
     #[test]
     fn each_filter_plugin_is_a_result_of_its_own() {
+        #[cfg(feature = "plugins")]
         use vectorcraft_plugins::wat as tpl;
         let _names = crate::tests::SHARED_PLUGIN_NAMES.lock().unwrap_or_else(|e| e.into_inner());
         let (one, two) = ("test.UI.palette_filter-one", "test.UI.palette_filter-two");
@@ -1600,6 +1608,11 @@ mod tests {
         // What a pick can change: the document with its selection, history, revision and layer
         // state, the Script Console, and the interface's state (an open dialog or panel, the
         // selected tool), the status line aside.
+        #[cfg(feature = "scripting")]
+        let console_lines = |app: &VectorcraftApp| app.session.script_console().lines().len();
+        // Without `scripting` there is no Script Console.
+        #[cfg(not(feature = "scripting"))]
+        let console_lines = |_: &VectorcraftApp| 0;
         let look = |app: &VectorcraftApp| {
             let mut ui = serde_json::to_value(&app.ui).unwrap_or_default();
             // The pick's count is the palette's record of the pick ([`record_pick`]), not the command's doing.
@@ -1611,7 +1624,7 @@ mod tests {
                 (st.doc.clone(), format!("{:?}", st.selection), st.history.undo.len(), st.revision, st.active_layer, st.layer_rows.clone())
             });
             // A modeless dialog (Find and Replace) blocks nothing, so `any_dialog_open` leaves it out: the host lists it.
-            (doc, app.session.script_console().lines().len(), (app.any_dialog_open(), crate::tests::picks::open_dialogs(app).len()), ui)
+            (doc, console_lines(app), (app.any_dialog_open(), crate::tests::picks::open_dialogs(app).len()), ui)
         };
         let acts = |id: &str| {
             [Session::new(), Fixture::Single.session(), Fixture::Multi.session()].into_iter().any(|session| {
@@ -1655,7 +1668,11 @@ mod tests {
         for id in PICK_RUNS.iter().filter(|id| !session_only.contains(id)) {
             assert!(acts(id), "a pick of {id} does something");
         }
-        for id in PICK_RUNS.iter().chain(&["object.group", "select.key", "view.preciseCursors", "path.close"]) {
+        // Without the `plugins` feature the `plugin.*` commands are not registered, so not listed;
+        // without `scripting` the `script.*` commands.
+        let registered =
+            |id: &&&str| (cfg!(feature = "plugins") || !id.starts_with("plugin.")) && (cfg!(feature = "scripting") || !id.starts_with("script."));
+        for id in PICK_RUNS.iter().chain(&["object.group", "select.key", "view.preciseCursors", "path.close"]).filter(registered) {
             assert!(listed.contains(*id), "{id} stays");
         }
     }
@@ -1672,17 +1689,21 @@ mod tests {
             assert!(ids.iter().any(|i| i == id), "{id} is a result");
             pick(app, id);
         };
-        app.session.script_frames = true;
-        app.run("script.run", json!({"source": "$.writeln('line')", "name": "c.js"})).unwrap();
-        for _ in 0..10_000 {
-            if !app.session.script_running() {
-                break;
+        // Without `scripting` there is no script command to pick.
+        #[cfg(feature = "scripting")]
+        {
+            app.session.script_frames = true;
+            app.run("script.run", json!({"source": "$.writeln('line')", "name": "c.js"})).unwrap();
+            for _ in 0..10_000 {
+                if !app.session.script_running() {
+                    break;
+                }
+                crate::script_runs::poll(&mut app);
             }
-            crate::script_runs::poll(&mut app);
+            assert!(!app.session.script_running() && !app.session.script_console().lines().is_empty());
+            pick_listed(&mut app, "script.console.clear");
+            assert!(app.session.script_console().lines().is_empty(), "{}", app.ui.status);
         }
-        assert!(!app.session.script_running() && !app.session.script_console().lines().is_empty());
-        pick_listed(&mut app, "script.console.clear");
-        assert!(app.session.script_console().lines().is_empty(), "{}", app.ui.status);
 
         let default = app.session.prefs.use_precise_cursors;
         app.session.prefs.use_precise_cursors = !default;
@@ -1822,10 +1843,12 @@ mod tests {
         assert_eq!(crate::i18n::tr_id(fr, "pathfinder.add", "Add"), "Réunion");
     }
 
+    #[cfg(feature = "plugins")]
     /// Two filter plug-ins with one name show their ids after it, the name untranslated, and each
     /// pick runs its own filter.
     #[test]
     fn filter_plugins_with_one_name_show_their_ids() {
+        #[cfg(feature = "plugins")]
         use vectorcraft_plugins::wat as tpl;
         let _names = crate::tests::SHARED_PLUGIN_NAMES.lock().unwrap_or_else(|e| e.into_inner());
         let (one, two) = ("test.UI.palette_same-one", "test.UI.palette_same-two");

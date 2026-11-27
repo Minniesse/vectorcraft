@@ -80,6 +80,7 @@
 //!   `fileExecutes`.
 //! - In a wasm build every lookup fails with [`NO_WEB`].
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::collections::HashMap;
 use std::path::Path;
 use std::rc::Rc;

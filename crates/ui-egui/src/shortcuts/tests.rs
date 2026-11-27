@@ -147,6 +147,7 @@ fn open_effect(app: &VectorcraftApp) -> Option<String> {
     (dialog_kind(app).as_deref() == Some("effect")).then(|| app.effect_dialogs.effect.as_ref().map(|o| o.cx.id.clone()))?
 }
 
+#[cfg(feature = "plugins")]
 /// Whether the window's top dialog is plug-in `plugin`'s dialog: its key is `plugin`, its instance the plug-in.
 fn plugin_open(app: &VectorcraftApp, plugin: &str) -> bool {
     let want = craft::ui::dialog::dialog_id((crate::dialogs::plugin::KIND, plugin));
@@ -1600,9 +1601,11 @@ fn an_effect_menu_item_takes_a_shortcut_of_its_own() {
     assert_eq!(item_shortcut(&app, "effect.dialog", json!({"effect": "distort.transform"})).as_deref(), Some("Cmd+Alt+Shift+F11"));
 }
 
+#[cfg(feature = "plugins")]
 /// A live-effect plug-in installed later takes a shortcut of its own, and the key applies the effect.
 #[test]
 fn a_live_effect_plugin_installed_later_takes_a_shortcut_of_its_own() {
+    #[cfg(feature = "plugins")]
     use vectorcraft_plugins::wat as tpl;
     let (plugin, effect, key) = ("test.ui.keyedfx", "plugin.test.ui.keyedfx", "effect:plugin.test.ui.keyedfx");
     let install = |params: &str| {
@@ -1637,10 +1640,12 @@ fn a_live_effect_plugin_installed_later_takes_a_shortcut_of_its_own() {
     vectorcraft_plugins::registry::remove(plugin);
 }
 
+#[cfg(feature = "plugins")]
 /// Each filter plug-in's Object › Plug-ins item has a row of its own with no default shortcut; a key
 /// given to one opens that filter's dialog and the other stays unbound.
 #[test]
 fn each_filter_plugin_takes_a_shortcut_of_its_own() {
+    #[cfg(feature = "plugins")]
     use vectorcraft_plugins::wat as tpl;
     let _names = crate::tests::SHARED_PLUGIN_NAMES.lock().unwrap_or_else(|e| e.into_inner());
     let (one, two) = ("test.UI.key_filter-one", "test.UI.key_filter-two");
@@ -1676,9 +1681,11 @@ fn each_filter_plugin_takes_a_shortcut_of_its_own() {
     vectorcraft_plugins::registry::remove(two);
 }
 
+#[cfg(feature = "plugins")]
 /// A filter plug-in replaced under its id, or reinstalled by Reload Plug-ins, keeps its shortcut.
 #[test]
 fn a_filter_plugin_keeps_its_shortcut_when_replaced_or_reloaded() {
+    #[cfg(feature = "plugins")]
     use vectorcraft_plugins::wat as tpl;
     let id = "test.UI.replaced_filter";
     let key = format!("plugin:{id}");
@@ -1713,9 +1720,11 @@ fn a_filter_plugin_keeps_its_shortcut_when_replaced_or_reloaded() {
     vectorcraft_plugins::registry::remove(id);
 }
 
+#[cfg(feature = "plugins")]
 /// The key of a heavy filter does what a click on its item does.
 #[test]
 fn a_heavy_filter_plugin_runs_from_its_shortcut_as_from_its_menu_item() {
+    #[cfg(feature = "plugins")]
     use vectorcraft_plugins::wat as tpl;
     let mut app = new_app();
     // The background work waits until the test runs it, which it never does: the run started from

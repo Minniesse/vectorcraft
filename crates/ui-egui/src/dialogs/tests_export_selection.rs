@@ -5,6 +5,7 @@ use std::cell::Cell;
 use std::rc::Rc;
 
 use serde_json::json;
+#[cfg(feature = "plugins")]
 use vectorcraft_plugins::wat::{self as tpl, Echo};
 
 use super::tests_export::{Written, answer_saves, app_saving, confirm, fields, frame, kind, names, on_save, rgba, set};
@@ -26,6 +27,7 @@ fn picking(path: &str) {
     on_save(move |_| Some(picked.clone()));
 }
 
+#[cfg(feature = "plugins")]
 /// How many paths a native document's JSON (or the input an exporter plug-in is given) holds.
 fn paths_in(bytes: &[u8]) -> usize {
     String::from_utf8_lossy(vectorcraft_format::json_part(bytes)).matches("\"anchors\"").count()
@@ -106,6 +108,7 @@ fn export_selection_to_svg_keeps_the_remembered_use_artboards() {
     assert_eq!(app.ui.svg_options["useArtboards"], true, "{}", app.ui.svg_options);
 }
 
+#[cfg(feature = "plugins")]
 /// A format without an options dialog (a native document) and an exporter plug-in, with or
 /// without parameters, are given the selection alone: fewer paths than the whole document.
 #[test]

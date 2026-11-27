@@ -35,6 +35,8 @@
 #![forbid(unsafe_code)]
 
 pub mod addons;
+#[cfg(feature = "plugins")]
+pub(crate) use vectorcraft_plugins as plugin_host;
 mod adjust;
 mod bake;
 mod clip;
@@ -46,6 +48,8 @@ mod live;
 mod marks;
 pub mod pixel;
 mod placement;
+#[cfg(not(feature = "plugins"))]
+mod plugin_host;
 pub mod preview;
 mod raster;
 mod reshape;

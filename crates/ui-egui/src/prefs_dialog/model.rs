@@ -253,7 +253,7 @@ impl Live<'_> {
             let _ = category;
             groups.add("", self.row(key, tl!(label), label, RowKind::Bool(self.bool_of(key))));
         }
-        for sp in PREF_SPECS.iter().filter(|s| s.category == cat) {
+        for sp in PREF_SPECS.iter().filter(|s| s.category == cat && !crate::left_out::hidden_pref(s.key)) {
             groups.add(sp.section, self.spec_row(sp));
             if sp.key == "editOriginalSystemDefaults" {
                 groups.add(sp.section, self.row("editOriginal", "", "Edit Original with PhotoCraft", RowKind::Custom));

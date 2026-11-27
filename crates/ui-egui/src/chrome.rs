@@ -1,5 +1,6 @@
 //! Window chrome: application bar (menus), Control bar, document tabs, status bar.
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::borrow::Cow;
 use std::cell::RefCell;
 
@@ -53,8 +54,6 @@ const PALETTE: &str = "help.commandPalette";
 enum Trailing {
     /// The Safe Mode label, shown only in Safe Mode.
     Safe,
-    /// The community button.
-    Discord,
     /// Explore tutorials.
     Learn,
     /// Arrange Documents.
@@ -67,13 +66,12 @@ enum Trailing {
 
 impl Trailing {
     /// The controls in the order they are drawn.
-    const SHOWN: [Trailing; 6] = [Trailing::Discord, Trailing::Learn, Trailing::Search, Trailing::Arrange, Trailing::Safe, Trailing::Switcher];
+    const SHOWN: [Trailing; 5] = [Trailing::Learn, Trailing::Search, Trailing::Arrange, Trailing::Safe, Trailing::Switcher];
 
-    /// The rank the bar gives it up in, lowest first: Discord, tutorials, Arrange Documents, then the search. Each is
+    /// The rank the bar gives it up in, lowest first: tutorials, Arrange Documents, then the search. Each is
     /// also in a menu, so a hidden one goes nowhere. Safe Mode and the switcher always show.
     fn rank(self) -> Option<u8> {
         match self {
-            Trailing::Discord => Some(1),
             Trailing::Learn => Some(2),
             Trailing::Arrange => Some(3),
             Trailing::Search => Some(4),
@@ -90,7 +88,6 @@ impl Trailing {
                     app.run("help.safeMode", json!({})).ok();
                 }
             }
-            Trailing::Discord => crate::community::discord_button(app, ui),
             Trailing::Learn => {
                 // PLAN: assumed `IconButton::command` is bound by a `&str` command id.
                 IconButton::command(IconId::new("graduation-cap"), "window.learn")
@@ -177,7 +174,7 @@ fn trailing(ui: &mut Ui, app: &mut VectorcraftApp) {
     }
 }
 
-/// The application bar, the body of the shell's title bar: brand mark, Home and menus, then Discord,
+/// The application bar, the body of the shell's title bar: brand mark, Home and menus, then
 /// tutorials, Arrange Documents, search and the workspace switcher at the end. The title bar draws
 /// the caption buttons and drags the window; it shows the title only while the menus are in the macOS
 /// menu bar, where the bar has the room the menus leave.

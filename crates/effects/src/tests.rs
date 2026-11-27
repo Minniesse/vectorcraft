@@ -6,9 +6,11 @@ use super::*;
 
 mod clipfx;
 mod imageoutline;
+#[cfg(feature = "plugins")]
 mod painted;
 mod rasterfollow;
 mod scale;
+#[cfg(feature = "plugins")]
 mod solidcontext;
 mod transformfx;
 mod typestroke;

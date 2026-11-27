@@ -1,6 +1,8 @@
 //! One encoder per writable format. Each format's options are parsed, typed, from the export params
 //! (unknown keys are ignored, so one params object can carry the options of several formats).
 
+#[cfg(feature = "plugins")]
+use crate::plugin_host as vectorcraft_plugins;
 use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
@@ -1027,6 +1029,7 @@ pub fn encode_all(doc: &Document, format: &str, p: &Value) -> Result<Encoded> {
 /// [`encode_all`] of `doc` as it is.
 fn encode_all_of(doc: &Document, format: &str, p: &Value) -> Result<Encoded> {
     let f = super::writable(C, Some(format), None)?;
+    #[cfg(feature = "plugins")]
     if let Some(plugin) = vectorcraft_plugins::export::by_format(f.id) {
         return plugin_file(doc, &plugin, f, p);
     }
@@ -1057,6 +1060,7 @@ fn encode_all_of(doc: &Document, format: &str, p: &Value) -> Result<Encoded> {
 /// ([`super::access::with_readable_settings_folder`]), and `p`'s `params`, for the file `p`'s `path`
 /// names (else one named after the document) with that path's extension when the plug-in lists it,
 /// else its first. Its warnings come back with the file, as losses (the plug-in gives them no kind).
+#[cfg(feature = "plugins")]
 fn plugin_file(doc: &Document, plugin: &vectorcraft_plugins::Plugin, f: &Format, p: &Value) -> Result<Encoded> {
     use vectorcraft_plugins::{Error, export};
     let doc = doc.without_edit_modes();

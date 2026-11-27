@@ -1219,12 +1219,14 @@ fn undecodable_images_are_marked_and_reported_once() {
     assert_eq!(app.ui.status, "", "said once");
 }
 
+#[cfg(feature = "plugins")]
 /// The plug-in effects a document's first view leaves out past its budget are reported in the
 /// status bar once, in the singular or the plural, and Effect › Refresh Deferred Effects is
 /// enabled until it has run them.
 #[test]
 fn the_first_view_reports_the_plug_in_effects_it_deferred() {
     use std::sync::atomic::{AtomicU64, Ordering};
+    #[cfg(feature = "plugins")]
     use vectorcraft_plugins::wat as tpl;
     let mut app = VectorcraftApp::new(Session::new(), Default::default());
     app.canvas.worker_started = true; // render on this thread
@@ -4959,6 +4961,7 @@ fn a_whole_pixel_pan() {
     }
 }
 
+#[cfg(feature = "plugins")]
 /// Installing, replacing or removing a plug-in draws a document with a plug-in effect again, and a
 /// pan from the frame drawn before the change renders whole instead of copying its pixels. The key
 /// of a document without a plug-in effect does not follow the plug-ins. The other tests share the
@@ -4968,7 +4971,9 @@ fn a_plug_in_change_draws_the_document_s_plug_in_effects_again() {
     keeping_color_settings(a_plug_in_change);
 }
 
+#[cfg(feature = "plugins")]
 fn a_plug_in_change() {
+    #[cfg(feature = "plugins")]
     use vectorcraft_plugins::wat as tpl;
     let id = "test.canvas.redraw";
     let module = vectorcraft_format::base64_encode(&wat::parse_str(tpl::module(&tpl::manifest(id, "effect", "{}"), tpl::ECHO, "", 1)).unwrap());

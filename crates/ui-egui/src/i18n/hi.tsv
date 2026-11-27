@@ -748,8 +748,6 @@ antiAlias	Sharp	शार्प
 	Artboard:	आर्टबोर्ड:
 	Artboards	आर्टबोर्ड्स
 	Artboards: {n}	आर्टबोर्ड: {n}
-	ArtCraft website	ArtCraft वेबसाइट
-	ArtCraft Website	ArtCraft वेबसाइट
 	Artistic	कलात्मक
 	Artwork	आर्टवर्क
 	Artwork Cleanup	आर्टवर्क की सफ़ाई
@@ -1753,7 +1751,6 @@ arrowhead	Feather	पंख
 	Discard Empty Type	खाली टाइप हटाएँ
 	Discard Recovered Documents	रिकवर किए डॉक्यूमेंट डिस्कार्ड करें
 	Discard White Overprint in Output	आउटपुट में अलार्म व्हाइट ओवरप्रिंट
-	Discord	Discord
 	Discretionary Hyphen	विवेकाधीन हाइफेन
 	Discretionary Ligatures	वैकल्पिक लिगेचर
 	Display	डिस्प्ले
@@ -2957,10 +2954,7 @@ arrowhead	Feather	पंख
 	JavaScript Files	जावास्क्रिप्ट फ़ाइलें
 	JavaScript:	जावास्क्रिप्ट:
 	Join	जोड़ें
-	Join our Discord	हमारे डिसकॉर्ड में शामिल हों
-	Join Our Discord	हमारे डिसकॉर्ड में शामिल हों
 	Join Point Text	पॉइंट टेक्स्ट जोड़ें
-	Join the ArtCraft community on Discord (discord.gg/artcraft)	Discord (discord.gg/artcraft) पर ArtCraft समुदाय में शामिल हों
 	Join the lines of each paragraph	हर पैराग्राफ़ की लाइनें जोड़ें
 	Join Tool	जॉइन टूल
 	Joins	जुड़ना
@@ -3928,8 +3922,7 @@ arrowhead	Feather	पंख
 	Paragraph:	पैराग्राफ़:
 	Parametric Shape	पैरामीट्रिक आकार
 	Parametric Shape Tool	पैरामीट्रिक आकार टूल
-	Part of ArtCraft. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	ArtCraft का हिस्सा। MIT OR Apache-2.0. फ़ॉन्ट: Source Sans 3, Inter, JetBrains Mono (OFL). आइकन: Lucide (ISC) + VectorCraft.
-	Part of ArtCraft. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono, Noto Sans SC (OFL). Icons: Lucide (ISC) + VectorCraft.	ArtCraft का हिस्सा। MIT OR Apache-2.0। फ़ॉन्ट: Source Sans 3, Inter, JetBrains Mono, Noto Sans SC (OFL)। आइकन: Lucide (ISC) + VectorCraft।
+	MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	MIT OR Apache-2.0. फ़ॉन्ट: Source Sans 3, Inter, JetBrains Mono (OFL). आइकन: Lucide (ISC) + VectorCraft.
 	Password	पासवर्ड
 	Paste	पेस्ट करें
 	Paste Design	पेस्ट डिजाइन
@@ -6389,7 +6382,6 @@ arrowhead	Feather	पंख
 	VectorCraft documents: one locked object, updated when the file changes.	VectorCraft डॉक्यूमेंट्स: एक लॉक्ड ऑब्जेक्ट, जो फ़ाइल बदलने पर अपडेट होता है।
 	VectorCraft Generic CMYK (SWOP-like)	वेक्टर क्रेफ्ट जेनेरिक CMYK (SWOP-like)
 	VectorCraft Help…	VectorCraft मदद…
-	VectorCraft on getartcraft.com	getartcraft.com पर VectorCraft
 	VectorCraft on GitHub	GitHub पर VectorCraft
 	VectorCraft read this script without running it.	VectorCraft ने इस स्क्रिप्ट को रन किए बिना पढ़ा।
 	VectorCraft Swatches (.vcswatches)	VectorCraft स्वॉचेस (.vcswatches)

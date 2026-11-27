@@ -3,6 +3,8 @@
 //!
 //! A test binary of its own: installed plug-ins are process-wide, so clearing every plug-in's cache
 //! in the engine's other tests would empty the caches those tests check.
+// The WebAssembly plug-in host: only with the `plugins` feature (on by default).
+#![cfg(feature = "plugins")]
 // Integration tests: unwrapping and panicking on failure is fine here, unlike in shipped code (AGENTS.md › Robustness).
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 

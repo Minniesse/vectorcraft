@@ -49,7 +49,9 @@ pub(crate) fn todo(label: &'static str) -> Node {
     named(label, TODO, json!({ "label": label }))
 }
 /// A disabled row that stands for an empty list, so its submenu stays in the menu: the layout
-/// drops a heading with no item after it, and with it a submenu left empty.
+/// drops a heading with no item after it, and with it a submenu left empty. Only the plug-in lists
+/// have one.
+#[cfg(feature = "plugins")]
 pub(crate) fn placeholder(label: &'static str) -> Node {
     named(label, PLACEHOLDER, json!({ "label": label }))
 }
@@ -77,13 +79,16 @@ mod ui_commands;
 
 pub use context::context_items;
 #[cfg(test)]
+#[cfg(feature = "scripting")]
 use entries::flatten;
 pub use entries::{InsertableItem, MenuEntry, context_entries, insertable, insertable_items, menu_entries, plays_in_app, shown_label};
 pub(crate) use invoke::graph_dialog;
 pub use invoke::{click_target, invoke};
+#[cfg(feature = "plugins")]
+pub(crate) use labels::holds_plugin_commands;
+pub(crate) use labels::lists_plugin;
 pub(crate) use labels::shows_a_name;
 pub use labels::{CONTEXT_LABELS, DYNAMIC_LABELS, display_label, dynamic_label, item_shortcut, menu_strings};
-pub(crate) use labels::{holds_plugin_commands, lists_plugin};
 pub(crate) use model::{MAC_LABELS, home_key, home_showing};
 pub use run::{check_params, run_ui_command};
 pub(crate) use run::{normalize_panel, opt_bool, opt_index, opt_number};

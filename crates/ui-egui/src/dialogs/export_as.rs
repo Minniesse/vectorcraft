@@ -9,6 +9,7 @@
 //! (`plugin::open_export`). Export Selection ([`export_selection`]) takes the same route after its
 //! save panel, and every format then writes the selection alone, cropped to it.
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::sync::LazyLock;
 
 use craft::ui::contract::Bind;
@@ -237,6 +238,7 @@ fn options_or_write(
                     params["range"] = json!(range);
                 }
             }
+            #[cfg(feature = "plugins")]
             let plugin = plugin.filter(|p| !p.manifest().params.is_empty());
             // A raster format's dialog is told about Export Selection by its record; the others read the param.
             let raster_dialog = plugin.is_none() && f.raster;

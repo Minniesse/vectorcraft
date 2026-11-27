@@ -3,6 +3,7 @@ use super::{
     Result, Session, TEMPLATE_FORMATS, UNSUPPORTED, Unsupported, Value, bad, dxf, eps, hpgl, json, metafile, native, pdf, screens, svg, text,
     unsupported,
 };
+use crate::plugin_host as vectorcraft_plugins;
 
 /// One option a format's encoder reads from the export params.
 #[derive(Clone, Copy, Debug)]
@@ -833,7 +834,7 @@ pub fn builtin_open_filters() -> impl Iterator<Item = (&'static str, &'static [&
 
 /// The open-dialog filters after the document formats: swatch and graphic style libraries,
 /// Libraries panel libraries, presets (perspective grid presets among them), composite fonts,
-/// shortcut sets, scripts and plug-ins.
+/// shortcut sets, scripts and plug-ins. A build without scripts or plug-ins lists no filter for them.
 fn other_open_filters() -> impl Iterator<Item = (&'static str, &'static [&'static str])> {
     std::iter::once(("Swatch libraries", crate::cmd::swatchlib::LIBRARY_EXTS))
         .chain(std::iter::once(("Graphic Style Libraries", std::slice::from_ref(&vectorcraft_doc::style_libs::STYLES_EXT))))
@@ -847,6 +848,7 @@ fn other_open_filters() -> impl Iterator<Item = (&'static str, &'static [&'stati
         .chain(std::iter::once(("Shortcut sets", crate::cmd::shortcutset::EXTS)))
         .chain(std::iter::once(("Scripts", crate::cmd::scripts::EXTS)))
         .chain(std::iter::once(("Plug-ins", crate::cmd::plugin::EXTS)))
+        .filter(|(_, exts)| !exts.is_empty())
 }
 
 /// Open-dialog filters for Swatch Libraries and Graphic Style Libraries Other Library… and Locate
@@ -899,6 +901,13 @@ fn builtin(k: &str) -> Option<&'static Format> {
 /// only, with the plug-in's name as the label and its extensions. Each is made once for each
 /// installation of its plug-in, its strings interned, so formats live as long as the catalogues
 /// that hold them.
+#[cfg(not(feature = "plugins"))]
+pub fn plugin_formats() -> Vec<&'static Format> {
+    Vec::new()
+}
+
+/// The formats the installed exporter and importer plug-ins add (see the build without `plugins`).
+#[cfg(feature = "plugins")]
 pub fn plugin_formats() -> Vec<&'static Format> {
     use vectorcraft_plugins::{Kind, export, registry};
     static MADE: std::sync::Mutex<Vec<(u64, &'static Format)>> = std::sync::Mutex::new(Vec::new());

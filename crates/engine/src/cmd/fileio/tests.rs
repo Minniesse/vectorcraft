@@ -460,7 +460,8 @@ fn open_exts_cover_every_readable_format() {
     assert_eq!(filters[0], ("All readable files", OPEN_EXTS));
     assert_eq!(
         filters.len(),
-        13 + FORMATS.iter().filter(|f| f.read).count(),
+        // The Scripts and Plug-ins filters only with their features.
+        11 + usize::from(cfg!(feature = "scripting")) + usize::from(cfg!(feature = "plugins")) + FORMATS.iter().filter(|f| f.read).count(),
         "and swatch and graphic style libraries, libraries, flattener, PDF, print, perspective grid and export presets, composite \
          fonts, shortcut sets, scripts, plug-ins"
     );
@@ -475,8 +476,16 @@ fn open_exts_cover_every_readable_format() {
         assert!(!filters[0].1.contains(e), "All readable files lists documents only, not .{e}");
     }
     assert!(filters.contains(&("Export presets", SCREEN_EXPORT_PRESET_EXTS)), "File › Open imports export presets");
-    assert!(filters.contains(&("Scripts", crate::cmd::scripts::EXTS)), "File › Open checks scripts");
-    assert_eq!(filters.last(), Some(&("Plug-ins", crate::cmd::plugin::EXTS)), "File › Open installs plug-ins");
+    if cfg!(feature = "scripting") {
+        assert!(filters.contains(&("Scripts", crate::cmd::scripts::EXTS)), "File › Open checks scripts");
+    } else {
+        assert!(filters.iter().all(|f| f.0 != "Scripts"), "a build without scripts lists no Scripts filter");
+    }
+    if cfg!(feature = "plugins") {
+        assert_eq!(filters.last(), Some(&("Plug-ins", crate::cmd::plugin::EXTS)), "File › Open installs plug-ins");
+    } else {
+        assert!(filters.iter().all(|f| f.0 != "Plug-ins"), "a build without plug-ins lists no Plug-ins filter");
+    }
 }
 
 #[test]
@@ -1567,6 +1576,7 @@ fn a_turned_cmyk_jpeg_keeps_its_icc_profile_from_every_segment() {
     assert!(kept.as_deref() == Some(icc.as_slice()), "the whole ICC profile: {:?} bytes", kept.map(|k| k.len()));
 }
 
+#[cfg(feature = "plugins")]
 /// With `importer` named, a file up to the importer's limit is read whole and a larger one is an
 /// error, whatever its content.
 #[test]

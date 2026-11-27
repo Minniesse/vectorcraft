@@ -3,6 +3,8 @@
 //! Re-launch, and Safe Mode in the window title. Safe Mode and installed plug-ins are
 //! process-wide, so these tests run in their own test binary, one at a time. The dialogs are
 //! answered through the control channel, the way agents do.
+// Safe Mode keeps plug-ins from loading: only with the `plugins` feature (on by default).
+#![cfg(feature = "plugins")]
 // Integration tests: unwrapping and panicking on failure is fine here, unlike in shipped code (AGENTS.md › Robustness).
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 

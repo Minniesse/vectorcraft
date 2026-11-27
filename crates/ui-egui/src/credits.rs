@@ -59,31 +59,24 @@ pub fn credits() -> Credits {
     Credits::new(contributors, models, TOTAL_COMMITS)
 }
 
-/// The URL of the community Discord, or empty when the command gives none.
-pub(crate) fn discord_url(app: &mut VectorcraftApp) -> String {
-    let reply = app.session.execute("help.discord", &serde_json::json!({})).unwrap_or_default();
-    reply["url"].as_str().unwrap_or_default().to_string()
-}
+/// The plain-text line that says what this build is based on (no mark, no community link).
+pub const BASED_ON: &str =
+    "Based on VectorCraft by the ArtCraft team (https://github.com/storytold/vectorcraft). This build is not an ArtCraft product.";
 
 /// The About tab's contents.
 pub fn about_info(app: &mut VectorcraftApp) -> AboutInfo {
-    let discord = discord_url(app);
     let links = crate::community::link_urls(app).map(|(label, url)| AboutLink::new(tl!(label), url));
     let mut built_with =
-        tl!("Part of ArtCraft. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.").to_string();
+        format!("{BASED_ON}\n{}", tl!("MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft."));
     // The GPU the window renders with, for bug reports (Preferences › Performance picks it).
     if let Some(adapter) = &app.graphics_adapter {
         built_with.push('\n');
         built_with.push_str(&crate::i18n::fmt(tl!("Graphics: {adapter}"), &[("adapter", adapter.as_str())]));
     }
-    let mut info = AboutInfo::new("VectorCraft", tl!("Open-source vector illustration in pure Rust."), env!("CARGO_PKG_VERSION"))
+    AboutInfo::new("VectorCraft", tl!("Open-source vector illustration in pure Rust."), env!("CARGO_PKG_VERSION"))
         .links(links)
         .built_with(built_with)
-        .icon(crate::brand::image());
-    if !discord.is_empty() {
-        info = info.community(AboutLink::new(tl!("Join our Discord"), discord));
-    }
-    info
+        .icon(crate::brand::image())
 }
 
 /// Help › About: opens the dialog on the window's host unless it is open. Before the window's first
@@ -123,5 +116,19 @@ mod tests {
             let header = people.contains(&format!("[people.{}]", c.login)) || people.contains(&format!("[people.\"{}\"]", c.login));
             assert!(header, "{} has no [people.{}] entry", c.login, c.login);
         }
+    }
+
+    /// About names the app in plain text and says what the build is based on; no mark, no
+    /// community button, and its one link is the upstream repository.
+    #[test]
+    fn about_names_the_app_in_plain_text_and_what_it_is_based_on() {
+        crate::i18n::set_current(crate::i18n::Lang::EN);
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let info = about_info(&mut app);
+        assert_eq!(info.app_name.as_str(), "VectorCraft");
+        assert!(info.mark.is_none() && info.part_of.is_none() && info.community.is_none());
+        assert_eq!(info.built_with.as_str().lines().filter(|l| *l == BASED_ON).count(), 1, "{:?}", info.built_with);
+        let urls: Vec<&str> = info.links.iter().map(|l| l.url.as_str()).collect();
+        assert_eq!(urls, ["https://github.com/storytold/vectorcraft"]);
     }
 }

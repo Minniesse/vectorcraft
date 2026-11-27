@@ -12,6 +12,7 @@
 //! its encoders' reports out, and stops before the next file, so the files it wrote before the
 //! cancel stay.
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};

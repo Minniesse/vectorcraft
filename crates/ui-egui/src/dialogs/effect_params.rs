@@ -1,6 +1,7 @@
 //! The rows of an effect's dialog: [`effect_params`] dispatches to the effect's own builder or to
 //! [`generic`], and the tables of the values the rows pick from live here.
 
+use crate::plugin_host as vectorcraft_plugins;
 use craft::ui::patterns::form_dialogs::{DialogFields, Param, ParamKind};
 use craft::ui::runtime::env::{LengthUnits, UnitKind};
 use serde_json::{Map, Value};
@@ -79,6 +80,7 @@ pub(crate) fn effect_params(cx: &EffectCx, fields: &DialogFields) -> Vec<Param> 
     if warp_effect::is_warp(id) {
         return warp_effect::params(cx, fields);
     }
+    #[cfg(feature = "plugins")]
     if let Some(plugin) = vectorcraft_plugins::effect::installed(id) {
         // With no rows every key passes through: the values the manifest's visibility reads.
         return form::plugin_params(plugin.manifest(), &form::json_of(&[], fields));

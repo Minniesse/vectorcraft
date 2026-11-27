@@ -5,7 +5,7 @@ use craft::ui::runtime::windows::WindowHost;
 use super::{VectorcraftApp, browsable_url};
 
 impl VectorcraftApp {
-    /// Open a link in the browser (Help → Discord, website, GitHub…).
+    /// Open a link in the browser (Help → VectorCraft on GitHub).
     pub fn open_url(&mut self, url: &str) {
         self.pending_url = Some(url.to_string());
         self.ui.status = format!("Opened {url}");

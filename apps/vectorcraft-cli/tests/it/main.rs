@@ -5,6 +5,7 @@
 mod cli;
 mod fileio;
 mod mcp_e2e;
+#[cfg(feature = "scripting")]
 mod script;
 
 /// Nextest relocates archived binaries; Cargo's compile-time path still names the build runner.

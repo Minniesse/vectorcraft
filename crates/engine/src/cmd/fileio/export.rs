@@ -1,5 +1,6 @@
 //! `document.export`, `document.serialize`, `document.exportSelection`, `document.exportForOffice`.
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::borrow::Cow;
 use std::collections::HashSet;
 use std::sync::Arc;

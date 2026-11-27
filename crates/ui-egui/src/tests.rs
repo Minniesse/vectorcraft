@@ -12,6 +12,8 @@ mod font_menu;
 mod fonts;
 mod guide_escape;
 mod home;
+#[cfg(any(not(feature = "plugins"), not(feature = "scripting")))]
+mod katwork_hidden;
 pub(super) mod labels;
 mod lifecycle;
 mod nativemenu;
@@ -25,7 +27,9 @@ mod pathtype;
 mod pdfoutput;
 pub(super) mod picks;
 mod place;
+#[cfg(feature = "plugins")]
 mod plugin_runs;
+#[cfg(feature = "plugins")]
 mod plugins;
 mod printps;
 mod printtiling;
@@ -38,9 +42,13 @@ mod ruler_origin;
 mod save;
 mod saveext;
 mod screenmode;
+#[cfg(feature = "scripting")]
 mod script_check;
+#[cfg(feature = "scripting")]
 mod script_dialogs;
+#[cfg(feature = "scripting")]
 mod script_run;
+#[cfg(feature = "scripting")]
 mod scripts_menu;
 mod scrub;
 mod selectall;
@@ -57,6 +65,7 @@ pub(crate) mod taskbar;
 mod toolescape;
 mod trace_runs;
 
+#[cfg(feature = "plugins")]
 /// Installed plug-ins are process-wide. Tests that install filter plug-ins under a name another
 /// test also installs, or that check how plug-ins sharing a name are told apart, hold this lock
 /// while their plug-ins are installed, so each sees only its own plug-ins under that name.

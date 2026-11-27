@@ -5,6 +5,7 @@
 //! [`crate::keymap::stored`]), over the built-in sets [`BUILTINS`]. The set in use reaches the key
 //! stage as `VectorcraftApp::shortcut_overrides`, from which the runtime builds the window's keymap.
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::{Arc, Mutex, OnceLock};
 
@@ -1628,10 +1629,12 @@ mod tests {
         written
     }
 
+    #[cfg(feature = "plugins")]
     /// A plug-in installed while the menus are walked doesn't leave a snapshot under the revision
     /// read before the walk: the keymap built for that revision would then lack the plug-in's row.
     #[test]
     fn a_plugin_installed_while_the_menus_are_walked_gets_a_new_snapshot() {
+        #[cfg(feature = "plugins")]
         use vectorcraft_plugins::wat as tpl;
         let install = |id: &str| {
             let manifest = format!(r#"{{"id":"{id}","name":"{id}","version":"1","kind":"filter","params":{{}}}}"#);
@@ -1986,17 +1989,20 @@ mod tests {
         assert_eq!(row(&mut app, "symbol.breakLink").unwrap()["shortcut"], spelled("Cmd+Alt+Shift+F9"));
     }
 
+    #[cfg(feature = "plugins")]
     /// One pass of Keyboard Shortcuts in the window of `ctx`, which `show` takes the keymap from.
     fn dialog_pass(app: &mut VectorcraftApp, ctx: &egui::Context) {
         let mut out = ctx.run_ui(egui::RawInput::default(), |ui| show(app, ui));
         out.textures_delta.clear();
     }
 
+    #[cfg(feature = "plugins")]
     /// An open dialog lists a live-effect plug-in installed while it is open, with the shortcut its
     /// set gives it, and drops the row while the plug-in is removed, keeping that shortcut in the
     /// set.
     #[test]
     fn an_open_dialog_follows_live_effect_plugins() {
+        #[cfg(feature = "plugins")]
         use vectorcraft_plugins::wat as tpl;
         let (plugin, key) = ("test.ui.openfx", "effect:plugin.test.ui.openfx");
         let wasm = wat::parse_str(tpl::module(&tpl::manifest(plugin, "effect", r#"{"wiggle":{"type":"bool"}}"#), tpl::ECHO, "", 1)).unwrap();

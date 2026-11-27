@@ -4,6 +4,8 @@
 //!
 //! A test binary of its own: installed plug-ins are process-wide, and the unit tests that check the
 //! exact list of formats would see these ones.
+// The WebAssembly plug-in host: only with the `plugins` feature (on by default).
+#![cfg(feature = "plugins")]
 // Integration tests: unwrapping and panicking on failure is fine here, unlike in shipped code (AGENTS.md › Robustness).
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 

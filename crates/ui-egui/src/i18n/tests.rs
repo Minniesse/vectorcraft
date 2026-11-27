@@ -1400,9 +1400,13 @@ fn message_scan_reads_constants_of_the_file_and_its_crate() {
     let in_engine = ["a message of another crate", "the JPEG XL file is cut short", "the PCX file is cut short", "the image is too large"];
     assert_eq!(found(&[], &engine).iter().collect::<Vec<_>>(), in_engine);
     assert_eq!(found(&[], &BTreeMap::new()).len(), 5);
-    let scanned = message_literals();
-    for header in [crate::scripts_menu::TRUNCATED, crate::scripts_menu::UNREADABLE] {
-        assert!(!scanned.contains(header), "{header}");
+    // The Scripts menu's notes need `scripting`.
+    #[cfg(feature = "scripting")]
+    {
+        let scanned = message_literals();
+        for header in [crate::scripts_menu::TRUNCATED, crate::scripts_menu::UNREADABLE] {
+            assert!(!scanned.contains(header), "{header}");
+        }
     }
 }
 

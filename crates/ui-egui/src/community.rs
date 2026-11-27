@@ -1,39 +1,12 @@
-//! Community and project links: the Discord button (app bar) and the URLs About and Home list.
-//! Icons are Lucide's (ISC); Discord's own logo is a trademark, so the button uses a chat icon
-//! on Discord's colour with the word "Discord".
-
-use craft::behavior::IconId;
-use craft::ui::buttons::Button;
-use craft::ui::contract::{Props, Show};
-use craft::ui::primitives::IconSpec;
-use craft::ui::style::DataColor;
-use egui::{Color32, Ui};
+//! Project links: the URL About and Home list (the upstream GitHub repository).
 
 use crate::VectorcraftApp;
 
-/// Discord's brand colour (a colour, not a logo).
-const DISCORD: Color32 = Color32::from_rgb(0x58, 0x65, 0xF2);
-
-/// The Discord button: the app's filled push button with no edge, as production's app bar drew it, with Discord's colour
-/// on its icon alone. It opens the community link.
-pub fn discord_button(app: &mut VectorcraftApp, ui: &mut Ui) {
-    let icon = IconSpec::svg(IconId::new("message-circle")).data_color(DataColor::new(DISCORD));
-    let shown = Button::new(tl!("Discord")).icon(icon).tooltip(tl!("Join the ArtCraft community on Discord (discord.gg/artcraft)")).show(ui);
-    if shown.clicks > 0 {
-        app.open_link("help.discord");
-    }
-}
-
-/// The website, app page and GitHub links as (English label, URL), in that order: the one source
-/// About and Home list them from.
-pub fn link_urls(app: &mut VectorcraftApp) -> [(&'static str, String); 3] {
+/// The GitHub link as (English label, URL): the one source About and Home list it from.
+pub fn link_urls(app: &mut VectorcraftApp) -> [(&'static str, String); 1] {
     let l = app.session.execute("help.links", &serde_json::json!({})).unwrap_or_default();
     let url = |k: &str| l[k].as_str().unwrap_or("").to_string();
-    [
-        (tl!("ArtCraft website"), url("website")),
-        (tl!("VectorCraft on getartcraft.com"), url("appPage")),
-        (tl!("Source code on GitHub"), url("github")),
-    ]
+    [(tl!("Source code on GitHub"), url("github"))]
 }
 
 #[cfg(test)]
@@ -59,34 +32,22 @@ mod tests {
         let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
         let ctx = crate::testing::ui_context();
         let mut opened = vec![];
-        for id in ["help.discord", "help.website", "help.appPage", "help.github"] {
+        for id in ["help.appPage", "help.github"] {
             crate::menus::invoke(&mut app, id, serde_json::json!({}));
             opened.extend(opened_in_frame(&mut app, &ctx));
         }
-        assert_eq!(
-            opened,
-            [
-                "https://discord.gg/artcraft",
-                "https://getartcraft.com",
-                "https://getartcraft.com/apps/vectorcraft",
-                "https://github.com/storytold/vectorcraft"
-            ]
-        );
+        assert_eq!(opened, ["https://github.com/storytold/vectorcraft", "https://github.com/storytold/vectorcraft"]);
         // The control channel / MCP path returns the URL without opening a browser.
-        let v = app.run("help.discord", serde_json::json!({})).unwrap();
-        assert_eq!(v["url"], "https://discord.gg/artcraft");
+        let v = app.run("help.github", serde_json::json!({})).unwrap();
+        assert_eq!(v["url"], "https://github.com/storytold/vectorcraft");
         assert!(opened_in_frame(&mut app, &ctx).is_empty(), "nothing more is opened");
     }
 
     #[test]
-    fn link_urls_reads_the_three_help_links() {
+    fn link_urls_reads_the_github_link() {
         crate::i18n::set_current(crate::i18n::Lang::EN);
         let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
         let links = link_urls(&mut app);
-        assert_eq!(links.each_ref().map(|(label, _)| *label), ["ArtCraft website", "VectorCraft on getartcraft.com", "Source code on GitHub"]);
-        for (label, url) in &links {
-            assert!(url.starts_with("https://"), "{label}: {url}");
-        }
-        assert_eq!(links, link_urls(&mut app), "the order is stable");
+        assert_eq!(links, [("Source code on GitHub", "https://github.com/storytold/vectorcraft".to_string())]);
     }
 }

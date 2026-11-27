@@ -5,6 +5,7 @@
 //! own stacks, groups and layers included (layers through `ids`), or with `target: "contents"`
 //! the objects inside them (see `appearance`).
 
+use crate::plugin_host as vectorcraft_plugins;
 use std::sync::Arc;
 
 use serde_json::{Value, json};
@@ -141,11 +142,19 @@ fn effect_specs() -> Vec<CommandSpec> {
 }
 
 /// The active document has deferred live-effect plug-in stages ([`deferred_status`]).
+#[cfg(not(feature = "plugins"))]
+fn has_deferred(_: &Session) -> std::result::Result<(), String> {
+    Err("no plug-in effect is deferred".into())
+}
+
+/// The active document has deferred live-effect plug-in stages ([`deferred_status`]).
+#[cfg(feature = "plugins")]
 fn has_deferred(s: &Session) -> std::result::Result<(), String> {
     let st = s.active().ok_or("no document open")?;
     if deferred_effects(&st.doc, &st.plugin_effects).is_empty() { Err("no plug-in effect is deferred".into()) } else { Ok(()) }
 }
 
+#[cfg(feature = "plugins")]
 /// The objects the deferred stages of `fx` name, by id, each with whether it is in `d`'s layers.
 /// An object that is not is looked for in the art `d` draws from elsewhere, where live-effect
 /// plug-ins run too: the art of its symbols, patterns and brushes, and opacity masks.
@@ -166,6 +175,7 @@ fn stage_objects(d: &Document, fx: &vectorcraft_plugins::deferred::Deferrals) ->
     out
 }
 
+#[cfg(feature = "plugins")]
 /// The objects of `ids` found in the art `d` draws from outside its layers: the art of its
 /// symbols, patterns and brushes, and opacity masks (in that art or in the layers).
 fn definition_objects(d: &Document, ids: &[u64]) -> std::collections::HashMap<u64, Arc<Node>> {
@@ -189,6 +199,7 @@ fn definition_objects(d: &Document, ids: &[u64]) -> std::collections::HashMap<u6
     out
 }
 
+#[cfg(feature = "plugins")]
 /// Is plug-in `plugin`'s effect at `stage`'s place in `n` (`None`: no such object), and visible,
 /// on a visible fill or stroke when it is one's?
 fn stage_holds(n: Option<&Node>, stage: vectorcraft_plugins::deferred::Stage, plugin: &str) -> bool {
@@ -200,6 +211,7 @@ fn stage_holds(n: Option<&Node>, stage: vectorcraft_plugins::deferred::Stage, pl
     list.and_then(|l| l.get(stage.effect)).is_some_and(|e| e.visible && e.id == vectorcraft_plugins::effect::effect_id(plugin))
 }
 
+#[cfg(feature = "plugins")]
 /// Drops the records of `fx`'s stages whose object or plug-in effect is no longer at their place
 /// in `d` ([`stage_holds`]), and gives the objects of the others ([`stage_objects`]).
 fn prune(d: &Document, fx: &vectorcraft_plugins::deferred::Deferrals) -> std::collections::HashMap<u64, (Arc<Node>, bool)> {
@@ -208,6 +220,7 @@ fn prune(d: &Document, fx: &vectorcraft_plugins::deferred::Deferrals) -> std::co
     objects
 }
 
+#[cfg(feature = "plugins")]
 /// The deferred stages of `d` as `effect.deferredStatus` lists them. The records of stages whose
 /// object or plug-in effect is no longer at their place in `d` are dropped first.
 fn deferred_effects(d: &Document, fx: &vectorcraft_plugins::deferred::Deferrals) -> Vec<Value> {
@@ -224,12 +237,29 @@ fn deferred_effects(d: &Document, fx: &vectorcraft_plugins::deferred::Deferrals)
         .collect()
 }
 
+/// `effect.deferredStatus` without live-effect plug-ins: no stage is ever deferred.
+#[cfg(not(feature = "plugins"))]
+fn deferred_status(s: &mut Session, _: &Value) -> Result<Value> {
+    s.doc()?;
+    Ok(json!({"budgetMs": vectorcraft_plugins::deferred::OPENING_BUDGET_MS, "effects": []}))
+}
+
+/// `effect.refreshDeferred` without live-effect plug-ins: there is nothing to refresh.
+#[cfg(not(feature = "plugins"))]
+fn refresh_deferred(s: &mut Session, p: &Value) -> Result<Value> {
+    s.doc()?;
+    super::named_ids(p)?;
+    Ok(json!({"refreshed": 0, "stillDeferred": 0, "failed": 0}))
+}
+
+#[cfg(feature = "plugins")]
 /// `effect.deferredStatus`.
 fn deferred_status(s: &mut Session, _: &Value) -> Result<Value> {
     let st = s.doc()?;
     Ok(json!({"budgetMs": vectorcraft_plugins::deferred::OPENING_BUDGET_MS, "effects": deferred_effects(&st.doc, &st.plugin_effects)}))
 }
 
+#[cfg(feature = "plugins")]
 /// Draws `n` alone, small, as the canvas would (its live-effect plug-ins run inside the view that
 /// applies): what matters is that it is drawn, not its pixels. Is every part of it drawn, none left
 /// out for its size?
@@ -242,6 +272,7 @@ fn draw_small(renderer: &mut vectorcraft_render::Renderer, doc: &Document, n: &A
     renderer.stats.culled == 0
 }
 
+#[cfg(feature = "plugins")]
 /// `effect.refreshDeferred`: each object of the document's layers is drawn again alone, small,
 /// inside the document's view, so its stages are run with the input they were deferred with; a
 /// hidden object, or one in a hidden layer or group, is not drawn. An object in the art of a

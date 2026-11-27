@@ -8,13 +8,19 @@ description = "VectorCraft live effects evaluated to geometry"
 [lints]
 workspace = true
 
+[features]
+default = ["plugins"]
+# Live-effect plug-ins (vectorcraft-plugins, its wasmi host). Without it a plug-in effect a document
+# names draws as when its plug-in isn't installed: the object keeps its geometry and the effect.
+plugins = ["dep:vectorcraft-plugins"]
+
 [dependencies]
 vectorcraft-geom = { workspace = true }
 vectorcraft-three-d = { workspace = true }
 vectorcraft-doc = { workspace = true }
 vectorcraft-pathops = { workspace = true }
 vectorcraft-text = { workspace = true }
-vectorcraft-plugins = { workspace = true }
+vectorcraft-plugins = { workspace = true, optional = true }
 vectorcraft-trace = { workspace = true }
 image = { workspace = true }
 craft-image-codecs = { workspace = true }

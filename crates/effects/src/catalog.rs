@@ -2,6 +2,7 @@ use super::{
     CLASSIC_EXTRUDE, CLASSIC_REVOLVE, CLASSIC_ROTATE, CROP_MARKS, EXTRUDE, INFLATE, PATHFINDER_EFFECTS, RASTERIZE, REVOLVE, ROTATE, TRAP, Value,
     json, trap,
 };
+use crate::plugin_host as vectorcraft_plugins;
 
 /// Catalogue entry for one effect.
 #[derive(Clone, Debug, PartialEq)]

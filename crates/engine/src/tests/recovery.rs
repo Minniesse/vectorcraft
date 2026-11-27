@@ -1786,6 +1786,7 @@ fn a_crash_between_a_copys_document_and_its_details_keeps_every_image() {
     }
 }
 
+#[cfg(feature = "scripting")]
 /// A crash between writing a copy's document and its details, after a script's command changed
 /// the document since the last copy, restores the document as one a script opened.
 #[test]
@@ -1807,6 +1808,7 @@ fn a_crash_between_a_copys_document_and_its_details_keeps_a_scripts_change() {
     assert!(s.doc().unwrap().by_script.is_some(), "restored as a document a script opened");
 }
 
+#[cfg(feature = "scripting")]
 /// A crash while a restore moves a copy into the app's own area leaves no copy that a later
 /// restore opens without its details: a script's change is kept.
 #[test]
@@ -1828,6 +1830,7 @@ fn a_crash_while_a_copy_is_restored_keeps_a_scripts_change() {
     }
 }
 
+#[cfg(feature = "scripting")]
 /// A copy whose details entry is missing or can't be parsed restores as a document a script
 /// opened, and so does the copy that restore writes, after a later crash; a valid details entry
 /// without the script's mark restores as the person left it.
